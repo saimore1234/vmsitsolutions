@@ -10,7 +10,10 @@ function setRefreshCookie(res: Response, token: string) {
   res.cookie(REFRESH_COOKIE, token, {
     httpOnly: true,
     secure: env.isProd,
-    sameSite: "lax",
+    // Frontend and backend are on different domains in production (e.g. Vercel + Render),
+    // so the cookie must be sent on cross-site fetches — SameSite=None requires Secure=true,
+    // which is already the case in prod. Lax is fine (and safer) for same-origin local dev.
+    sameSite: env.isProd ? "none" : "lax",
     path: "/api/v1/auth",
     maxAge: env.refreshTokenTtlDays * 86_400_000,
   });
@@ -33,7 +36,7 @@ export const authController = {
 
   logout: asyncHandler(async (req: Request, res: Response) => {
     await authService.logout(req.cookies?.[REFRESH_COOKIE]);
-    res.clearCookie(REFRESH_COOKIE, { path: "/api/v1/auth" });
+    res.clearCookie(REFRESH_COOKIE, { path: "/api/v1/auth", secure: env.isProd, sameSite: env.isProd ? "none" : "lax" });
     if (req.auth) logActivity(req, "logout", "auth", req.auth.sub);
     res.json({ success: true, message: "Signed out" });
   }),

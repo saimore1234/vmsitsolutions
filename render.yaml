@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: vms-backend
+    runtime: docker
+    dockerfilePath: ./vms-it-solutions/backend/Dockerfile
+    dockerContext: ./vms-it-solutions/backend
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "4000"
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        sync: false
+      - key: PUBLIC_URL
+        sync: false
