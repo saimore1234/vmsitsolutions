@@ -79,7 +79,7 @@ pageRoutes.post("/", authorize("pages:create"), validate(pageSchema), asyncHandl
 
 pageRoutes.patch("/:id", authorize("pages:edit"), validate(pageSchema), asyncHandler(async (req, res) => {
   const { sections, ...rest } = req.body;
-  const page = await prisma.$transaction(async (tx: typeof prisma) => {
+  const page = await prisma.$transaction(async (tx) => {
     await tx.pageSection.deleteMany({ where: { pageId: req.params.id } });
     return tx.page.update({
       where: { id: req.params.id },

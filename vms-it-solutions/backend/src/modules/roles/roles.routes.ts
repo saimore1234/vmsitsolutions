@@ -54,7 +54,7 @@ roleRoutes.patch("/:id", authorize("roles:edit"), validate(roleSchema), asyncHan
   if (existing.isSystem && slugify(name) !== existing.slug) {
     throw ApiError.badRequest("System roles can't be renamed");
   }
-  const role = await prisma.$transaction(async (tx: typeof prisma) => {
+  const role = await prisma.$transaction(async (tx) => {
     await tx.rolePermission.deleteMany({ where: { roleId: req.params.id } });
     return tx.role.update({
       where: { id: req.params.id },
