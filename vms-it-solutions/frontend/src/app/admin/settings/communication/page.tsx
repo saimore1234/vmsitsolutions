@@ -90,6 +90,12 @@ export default function CommunicationSettingsPage() {
           <label className="flex items-center gap-2 text-xs font-medium text-slate-600"><input type="checkbox" {...bindToggle("thankYouPageEnabled")} /> Enable dedicated thank-you page</label>
           <label className="flex items-center gap-2 text-xs font-medium text-slate-600"><input type="checkbox" {...bindToggle("autoRedirectEnabled")} /> Auto-redirect to thank-you page after submit</label>
         </div>
+        {Boolean(comm.emailEnabled) && (!smtp.host || !smtp.fromEmail) && (
+          <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            Email notifications are enabled, but SMTP isn&apos;t fully configured (host and from-address are required) — no lead
+            notification emails will actually be sent until you complete the Email (SMTP) section below.
+          </p>
+        )}
       </section>
 
       <section className="rounded-xl border border-slate-200 bg-white p-6">

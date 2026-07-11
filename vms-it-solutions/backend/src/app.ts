@@ -14,6 +14,10 @@ export function createApp() {
 
   app.set("trust proxy", 1);
   app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
+  app.use((_req, res, next) => {
+    res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+    next();
+  });
   app.use(cors({ origin: env.corsOrigin, credentials: true }));
   app.use(compression());
   app.use(express.json({ limit: "2mb" }));

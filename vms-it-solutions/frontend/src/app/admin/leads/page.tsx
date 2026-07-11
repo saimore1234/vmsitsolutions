@@ -141,13 +141,13 @@ export default function LeadsPage() {
           <tbody className="divide-y divide-slate-100">
             {data?.items.map((l) => (
               <tr key={l.id} className="cursor-pointer transition hover:bg-slate-50" onClick={() => setOpen(l)}>
-                <td className="px-4 py-3">
-                  <div className="font-medium text-ink">{l.name}</div>
-                  {l.company && <div className="text-xs text-slate-400">{l.company}</div>}
+                <td className="max-w-[220px] px-4 py-3">
+                  <div className="truncate font-medium text-ink" title={l.name}>{l.name}</div>
+                  {l.company && <div className="truncate text-xs text-slate-400" title={l.company}>{l.company}</div>}
                 </td>
-                <td className="px-4 py-3 text-slate-500">
-                  <div>{l.email}</div>
-                  <div className="text-xs">{l.phone}</div>
+                <td className="max-w-[200px] px-4 py-3 text-slate-500">
+                  <div className="truncate" title={l.email ?? undefined}>{l.email}</div>
+                  <div className="truncate text-xs" title={l.phone ?? undefined}>{l.phone}</div>
                 </td>
                 <td className="px-4 py-3">
                   <span className="rounded-full bg-slate-100 px-2.5 py-0.5 font-mono-x text-[10px] uppercase tracking-wider text-slate-500">{l.kind}</span>
@@ -184,8 +184,8 @@ export default function LeadsPage() {
       )}
 
       {open && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-ink/50 p-5" onClick={() => setOpen(null)}>
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-backdrop fixed inset-0 z-50 grid place-items-center bg-ink/50 p-5" onClick={() => setOpen(null)}>
+          <div className="modal-panel w-full max-w-lg rounded-2xl bg-white p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="font-display text-lg font-semibold text-ink">{open.name}</h2>
@@ -204,11 +204,11 @@ export default function LeadsPage() {
       )}
 
       {creating && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-ink/50 p-5" onClick={() => setCreating(false)}>
+        <div className="modal-backdrop fixed inset-0 z-50 grid place-items-center bg-ink/50 p-5" onClick={() => setCreating(false)}>
           <form
             onSubmit={createLead}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg rounded-2xl bg-white p-6"
+            className="modal-panel w-full max-w-lg rounded-2xl bg-white p-6"
           >
             <div className="flex items-start justify-between">
               <h2 className="font-display text-lg font-semibold text-ink">Add lead</h2>

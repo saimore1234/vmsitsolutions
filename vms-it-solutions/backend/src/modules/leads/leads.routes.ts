@@ -16,10 +16,10 @@ export const leadRoutes = Router();
 
 const publicLeadSchema = z.object({
   body: z.object({
-    name: z.string().min(2, "Tell us your name"),
-    email: z.string().email("Enter a valid email").optional(),
-    phone: z.string().min(7).optional(),
-    company: z.string().optional(),
+    name: z.string().min(2, "Tell us your name").max(255, "Name is too long"),
+    email: z.string().email("Enter a valid email").max(255).optional(),
+    phone: z.string().min(7).max(30, "Phone number is too long").optional(),
+    company: z.string().max(255, "Company name is too long").optional(),
     message: z.string().max(4000).optional(),
     kind: z.enum(["contact", "demo", "quote", "general"]).default("contact"),
     meta: z.record(z.unknown()).optional(),
@@ -81,7 +81,7 @@ leadRoutes.post("/", publicFormLimiter, validate(publicLeadSchema), asyncHandler
 
 // Public: newsletter
 leadRoutes.post("/newsletter", publicFormLimiter, asyncHandler(async (req, res) => {
-  const email = z.string().email().parse(req.body.email);
+  const email = z.string().email().max(255).parse(req.body.email);
   await prisma.newsletterSubscriber.upsert({ where: { email }, update: { isActive: true }, create: { email } });
   res.status(201).json({ success: true, message: "You're subscribed" });
 }));
@@ -89,10 +89,10 @@ leadRoutes.post("/newsletter", publicFormLimiter, asyncHandler(async (req, res) 
 // ── Admin CRM ──
 const adminLeadSchema = z.object({
   body: z.object({
-    name: z.string().min(2, "Name is required"),
-    email: z.string().email("Enter a valid email").or(z.literal("")).optional(),
-    phone: z.string().min(7, "Enter a valid phone number").or(z.literal("")).optional(),
-    company: z.string().optional(),
+    name: z.string().min(2, "Name is required").max(255, "Name is too long"),
+    email: z.string().email("Enter a valid email").max(255).or(z.literal("")).optional(),
+    phone: z.string().min(7, "Enter a valid phone number").max(30, "Phone number is too long").or(z.literal("")).optional(),
+    company: z.string().max(255, "Company name is too long").optional(),
     message: z.string().max(4000).optional(),
     kind: z.enum(["contact", "demo", "quote", "general"]).default("general"),
     status: z.enum(["new", "contacted", "qualified", "proposal", "won", "lost"]).default("new"),

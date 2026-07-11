@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/site/PageHero";
+
+export const metadata: Metadata = { title: "Page not found" };
 
 export default function SiteNotFound() {
   return (
