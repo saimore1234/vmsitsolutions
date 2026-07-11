@@ -177,3 +177,84 @@ leadRoutes.delete("/:id", requireAuth, authorize("leads:delete"), asyncHandler(a
   logActivity(req, "deleted", "leads", req.params.id);
   res.json({ success: true, message: "Lead deleted" });
 }));
+
+// ── Conversion ──
+
+leadRoutes.post("/:id/convert-to-opportunity", requireAuth, authorize("opportunities:create"), asyncHandler(async (req, res) => {
+  const lead = await prisma.lead.findUniqueOrThrow({ where: { id: req.params.id }, include: { opportunity: true } });
+  if (lead.opportunity) throw ApiError.conflict("This lead has already been converted to an opportunity");
+
+  const [opportunity] = await prisma.$transaction([
+    prisma.opportunity.create({
+      data: {
+        title: `${lead.name}${lead.company ? ` — ${lead.company}` : ""}`,
+        leadId: lead.id,
+        company: lead.company,
+        contactName: lead.name,
+        contactEmail: lead.email,
+        contactPhone: lead.phone,
+        assignedToId: lead.assignedToId,
+      },
+    }),
+    prisma.lead.update({ where: { id: lead.id }, data: { status: "qualified" } }),
+  ]);
+  logActivity(req, "converted", "leads", lead.id, { opportunityId: opportunity.id });
+  res.status(201).json({ success: true, data: opportunity });
+}));
+
+leadRoutes.post("/:id/convert-to-customer", requireAuth, authorize("customers:create"), asyncHandler(async (req, res) => {
+  const lead = await prisma.lead.findUniqueOrThrow({ where: { id: req.params.id } });
+
+  const [customer] = await prisma.$transaction([
+    prisma.customer.create({
+      data: {
+        companyName: lead.company || lead.name,
+        contactName: lead.name,
+        email: lead.email,
+        phone: lead.phone,
+        accountManagerId: lead.assignedToId,
+      },
+    }),
+    prisma.lead.update({ where: { id: lead.id }, data: { status: "won" } }),
+  ]);
+  logActivity(req, "converted", "leads", lead.id, { customerId: customer.id });
+  res.status(201).json({ success: true, data: customer });
+}));
+
+leadRoutes.post("/:id/duplicate", requireAuth, authorize("leads:create"), asyncHandler(async (req, res) => {
+  const lead = await prisma.lead.findUniqueOrThrow({ where: { id: req.params.id } });
+  const copy = await prisma.lead.create({
+    data: {
+      name: lead.name, email: lead.email, phone: lead.phone, company: lead.company,
+      message: lead.message, kind: lead.kind, source: "manual", assignedToId: lead.assignedToId,
+    },
+  });
+  logActivity(req, "created", "leads", copy.id, { duplicatedFrom: lead.id });
+  res.status(201).json({ success: true, data: copy });
+}));
+
+leadRoutes.post("/:id/merge", requireAuth, authorize("leads:edit", "leads:delete"), asyncHandler(async (req, res) => {
+  const mergeLeadId = z.string().parse(req.body.mergeLeadId);
+  if (mergeLeadId === req.params.id) throw ApiError.badRequest("Cannot merge a lead into itself");
+
+  const [target, source] = await Promise.all([
+    prisma.lead.findUniqueOrThrow({ where: { id: req.params.id } }),
+    prisma.lead.findUniqueOrThrow({ where: { id: mergeLeadId } }),
+  ]);
+
+  await prisma.$transaction([
+    prisma.leadRemark.updateMany({ where: { leadId: source.id }, data: { leadId: target.id } }),
+    prisma.lead.update({
+      where: { id: target.id },
+      data: {
+        email: target.email || source.email,
+        phone: target.phone || source.phone,
+        company: target.company || source.company,
+        assignedToId: target.assignedToId || source.assignedToId,
+      },
+    }),
+    prisma.lead.delete({ where: { id: source.id } }),
+  ]);
+  logActivity(req, "updated", "leads", target.id, { mergedFrom: source.id });
+  res.json({ success: true, message: "Leads merged" });
+}));

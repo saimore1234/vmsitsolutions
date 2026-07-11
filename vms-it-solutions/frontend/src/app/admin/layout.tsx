@@ -9,6 +9,8 @@ import { MeContext, type Me } from "@/lib/me-context";
 const NAV = [
   { href: "/admin", label: "Dashboard", perm: "dashboard:view" },
   { href: "/admin/leads", label: "Leads", perm: "leads:view" },
+  { href: "/admin/opportunities", label: "Opportunities", perm: "opportunities:view" },
+  { href: "/admin/customers", label: "Customers", perm: "customers:view" },
   { href: "/admin/popups", label: "Popup Builder", perm: "popups:view" },
   { href: "/admin/users", label: "User Management", perm: "users:view" },
   { href: "/admin/user-groups", label: "User Groups", perm: "users:view" },

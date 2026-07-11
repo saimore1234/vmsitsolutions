@@ -15,6 +15,20 @@ interface Stats {
   leadTrend: { date: string; count: number }[];
   recentLeads: { id: string; name: string; company: string | null; kind: string; status: string; createdAt: string }[];
   recentActivity: { id: string; action: string; resource: string; createdAt: string; user: { firstName: string; lastName: string } | null }[];
+  pipeline: {
+    cards: { openPipelineValue: number; weightedForecast: number; wonRevenueTotal: number; wonRevenue30d: number; customersCount: number; quotationAcceptRate: number };
+    stageFunnel: { stage: string; count: number }[];
+    topOpenOpportunities: { id: string; title: string; company: string | null; stage: string; value: string | number | null; currency: string; probability: number }[];
+  };
+}
+
+const STAGE_ORDER = ["qualification", "quotation", "negotiation", "won", "lost"];
+const STAGE_STYLE: Record<string, string> = {
+  qualification: "bg-cobalt/10 text-cobalt", quotation: "bg-amber-100 text-amber-700",
+  negotiation: "bg-cyan-100 text-cyan-700", won: "bg-emerald-100 text-emerald-700", lost: "bg-slate-100 text-slate-500",
+};
+function money(n: number) {
+  return `₹${Math.round(n).toLocaleString()}`;
 }
 
 function TrendChart({ points }: { points: { date: string; count: number }[] }) {
@@ -68,6 +82,74 @@ export default function AdminDashboard() {
             <div className="mt-2 font-display text-2xl font-semibold text-ink">{c.value}</div>
           </div>
         ))}
+      </section>
+
+      <section>
+        <h2 className="font-display text-lg font-semibold tracking-tight text-ink">Sales Pipeline</h2>
+        <p className="mt-1 text-sm text-slate-500">Opportunities, quotations and revenue moving through the CRM funnel.</p>
+      </section>
+
+      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {[
+          { label: "Open pipeline value", value: money(stats.pipeline.cards.openPipelineValue) },
+          { label: "Weighted forecast", value: money(stats.pipeline.cards.weightedForecast) },
+          { label: "Won revenue · 30d", value: money(stats.pipeline.cards.wonRevenue30d) },
+          { label: "Quotation accept rate", value: `${stats.pipeline.cards.quotationAcceptRate}%` },
+        ].map((c) => (
+          <div key={c.label} className="rounded-xl border border-slate-200 bg-white p-5">
+            <div className="font-mono-x text-[10px] uppercase tracking-widest text-slate-400">{c.label}</div>
+            <div className="mt-2 font-display text-2xl font-semibold text-ink">{c.value}</div>
+          </div>
+        ))}
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-xl border border-slate-200 bg-white p-5">
+          <div className="font-mono-x text-[10px] uppercase tracking-widest text-slate-400">Pipeline by stage</div>
+          <ul className="mt-4 space-y-3">
+            {STAGE_ORDER.map((stage) => {
+              const entry = stats.pipeline.stageFunnel.find((s) => s.stage === stage);
+              const count = entry?.count ?? 0;
+              const max = Math.max(1, ...stats.pipeline.stageFunnel.map((s) => s.count));
+              const pct = Math.round((count / max) * 100);
+              return (
+                <li key={stage}>
+                  <div className="flex justify-between text-xs text-slate-600">
+                    <span className={`rounded-full px-2 py-0.5 font-mono-x text-[10px] uppercase tracking-wider ${STAGE_STYLE[stage]}`}>{stage}</span>
+                    <span>{count}</span>
+                  </div>
+                  <div className="mt-1 h-1.5 rounded-full bg-slate-100">
+                    <div className="h-1.5 rounded-full bg-cobalt" style={{ width: `${pct}%` }} />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div className="rounded-xl border border-slate-200 bg-white p-5">
+          <div className="flex items-center justify-between">
+            <div className="font-mono-x text-[10px] uppercase tracking-widest text-slate-400">Top open opportunities</div>
+            <Link href="/admin/opportunities" className="text-xs font-medium text-cobalt hover:underline">View all →</Link>
+          </div>
+          <ul className="mt-4 divide-y divide-slate-100">
+            {stats.pipeline.topOpenOpportunities.map((o) => (
+              <li key={o.id} className="py-2.5 text-sm">
+                <Link href={`/admin/opportunities/${o.id}`} className="flex items-center justify-between hover:text-cobalt">
+                  <div>
+                    <span className="font-medium text-ink">{o.title}</span>
+                    {o.company && <span className="text-slate-400"> · {o.company}</span>}
+                  </div>
+                  <span className="text-slate-500">{o.value ? money(Number(o.value)) : "—"}</span>
+                </Link>
+              </li>
+            ))}
+            {!stats.pipeline.topOpenOpportunities.length && <li className="py-2 text-xs text-slate-400">No open opportunities yet.</li>}
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="font-display text-lg font-semibold tracking-tight text-ink">Website &amp; Leads</h2>
       </section>
 
       <section className="grid gap-6 lg:grid-cols-3">

@@ -60,15 +60,19 @@ model User {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
-  refreshTokens RefreshToken[]
-  activityLogs  ActivityLog[]
-  loginLogs     LoginLog[]
-  assignedLeads Lead[]            @relation("LeadAssignee")
-  blogs         Blog[]
-  notifications Notification[]
-  branches      UserBranch[]
-  groups        UserGroupMember[]
-  documents     UserDocument[]
+  refreshTokens         RefreshToken[]
+  activityLogs          ActivityLog[]
+  loginLogs             LoginLog[]
+  assignedLeads         Lead[]            @relation("LeadAssignee")
+  assignedOpportunities Opportunity[]     @relation("OpportunityAssignee")
+  managedCustomers      Customer[]        @relation("CustomerAccountManager")
+  managedCrmProjects    CrmProject[]      @relation("CrmProjectManager")
+  assignedTickets       SupportTicket[]   @relation("SupportTicketAssignee")
+  blogs                 Blog[]
+  notifications         Notification[]
+  branches              UserBranch[]
+  groups                UserGroupMember[]
+  documents             UserDocument[]
 
   @@index([roleId])
   @@index([status])
@@ -158,15 +162,15 @@ model RolePermission {
 }
 
 model RefreshToken {
-  id        String   @id @default(cuid())
-  tokenHash String   @unique
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userAgent String?
   ip        String?
   expiresAt DateTime
   revokedAt DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   @@index([userId])
   @@map("refresh_tokens")
@@ -175,36 +179,36 @@ model RefreshToken {
 // ─────────────────────────── Company & Site Settings ───────────────────────────
 
 model CompanySetting {
-  id                 String  @id @default("company") // singleton row
-  companyName        String  @default("VMS IT Solutions")
-  shortName          String  @default("VMS")
-  tagline            String?
-  address            String?
-  city               String?
-  state              String?
-  country            String?
-  pincode            String?
-  gstNumber          String?
-  panNumber          String?
-  cinNumber          String?
-  email              String?
-  supportEmail       String?
-  salesEmail         String?
-  phone              String?
-  mobile             String?
-  whatsapp           String?
-  website            String?
-  workingHours       String?
-  googleMapEmbed     String?
-  latitude           Float?
-  longitude          Float?
-  mission            String?
-  vision             String?
-  description        String?
-  history            String?
-  ceoMessage         String?
-  aboutCompany       String?
-  updatedAt          DateTime @updatedAt
+  id             String   @id @default("company") // singleton row
+  companyName    String   @default("VMS IT Solutions")
+  shortName      String   @default("VMS")
+  tagline        String?
+  address        String?
+  city           String?
+  state          String?
+  country        String?
+  pincode        String?
+  gstNumber      String?
+  panNumber      String?
+  cinNumber      String?
+  email          String?
+  supportEmail   String?
+  salesEmail     String?
+  phone          String?
+  mobile         String?
+  whatsapp       String?
+  website        String?
+  workingHours   String?
+  googleMapEmbed String?
+  latitude       Float?
+  longitude      Float?
+  mission        String?
+  vision         String?
+  description    String?
+  history        String?
+  ceoMessage     String?
+  aboutCompany   String?
+  updatedAt      DateTime @updatedAt
 
   @@map("company_settings")
 }
@@ -224,24 +228,24 @@ model WebsiteSetting {
 }
 
 model ThemeSetting {
-  id             String   @id @default("theme") // singleton
-  primaryColor   String   @default("#2D5BFF")
-  secondaryColor String   @default("#0A0E1A")
-  accentColor    String   @default("#22D3EE")
-  bgColor        String   @default("#FFFFFF")
-  textColor      String   @default("#0F172A")
-  borderRadius   String   @default("12px")
-  fontFamily     String   @default("Inter")
-  headingFont    String   @default("Space Grotesk")
-  baseFontSize   String   @default("16px")
-  containerWidth String   @default("1200px")
-  buttonStyle    String   @default("rounded") // rounded | pill | square
-  cardStyle      String   @default("shadow")  // shadow | border | glass
-  navbarStyle    String   @default("glass")
-  footerStyle    String   @default("dark")
-  darkModeEnabled Boolean @default(true)
-  animations     Boolean  @default(true)
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default("theme") // singleton
+  primaryColor    String   @default("#2D5BFF")
+  secondaryColor  String   @default("#0A0E1A")
+  accentColor     String   @default("#22D3EE")
+  bgColor         String   @default("#FFFFFF")
+  textColor       String   @default("#0F172A")
+  borderRadius    String   @default("12px")
+  fontFamily      String   @default("Inter")
+  headingFont     String   @default("Space Grotesk")
+  baseFontSize    String   @default("16px")
+  containerWidth  String   @default("1200px")
+  buttonStyle     String   @default("rounded") // rounded | pill | square
+  cardStyle       String   @default("shadow") // shadow | border | glass
+  navbarStyle     String   @default("glass")
+  footerStyle     String   @default("dark")
+  darkModeEnabled Boolean  @default(true)
+  animations      Boolean  @default(true)
+  updatedAt       DateTime @updatedAt
 
   @@map("theme_settings")
 }
@@ -333,11 +337,11 @@ model SocialLink {
 }
 
 model Language {
-  id        String        @id @default(cuid())
-  code      String        @unique // en, hi, gu, mr
-  name      String
-  isDefault Boolean       @default(false)
-  isActive  Boolean       @default(true)
+  id           String        @id @default(cuid())
+  code         String        @unique // en, hi, gu, mr
+  name         String
+  isDefault    Boolean       @default(false)
+  isActive     Boolean       @default(true)
   translations Translation[]
 
   @@map("languages")
@@ -355,9 +359,9 @@ model Translation {
 }
 
 model Branch {
-  id        String  @id @default(cuid())
+  id        String       @id @default(cuid())
   name      String
-  kind      String  @default("regional") // head_office | warehouse | regional | support_center
+  kind      String       @default("regional") // head_office | warehouse | regional | support_center
   address   String?
   city      String?
   state     String?
@@ -366,8 +370,8 @@ model Branch {
   email     String?
   latitude  Float?
   longitude Float?
-  isActive  Boolean @default(true)
-  sortOrder Int     @default(0)
+  isActive  Boolean      @default(true)
+  sortOrder Int          @default(0)
   users     UserBranch[]
 
   @@map("branches")
@@ -376,9 +380,9 @@ model Branch {
 // ─────────────────────────── Navigation & CMS ───────────────────────────
 
 model Menu {
-  id       String     @id @default(cuid())
-  name     String     @unique // header | footer | sidebar
-  items    MenuItem[]
+  id    String     @id @default(cuid())
+  name  String     @unique // header | footer | sidebar
+  items MenuItem[]
 
   @@map("menus")
 }
@@ -401,27 +405,27 @@ model MenuItem {
 }
 
 model Page {
-  id          String        @id @default(cuid())
-  title       String
-  slug        String        @unique
-  status      String        @default("draft") // draft | published
-  isLanding   Boolean       @default(false)
-  sections    PageSection[]
-  seo         SeoMeta?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id        String        @id @default(cuid())
+  title     String
+  slug      String        @unique
+  status    String        @default("draft") // draft | published
+  isLanding Boolean       @default(false)
+  sections  PageSection[]
+  seo       SeoMeta?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
   @@map("pages")
 }
 
 model PageSection {
-  id        String @id @default(cuid())
+  id        String  @id @default(cuid())
   pageId    String
-  page      Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  page      Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
   kind      String // hero | banner | about | services | products | stats | cta | testimonials | clients | gallery | faq | contact | custom
   // Fully dynamic section content — the admin section builder writes JSON here.
   content   Json
-  sortOrder Int    @default(0)
+  sortOrder Int     @default(0)
   isActive  Boolean @default(true)
 
   @@index([pageId])
@@ -429,18 +433,18 @@ model PageSection {
 }
 
 model Banner {
-  id         String  @id @default(cuid())
-  title      String?
-  subtitle   String?
-  imageUrl   String?
-  videoUrl   String?
-  mobileUrl  String?
-  tabletUrl  String?
-  ctaLabel   String?
-  ctaUrl     String?
-  placement  String  @default("home_hero") // home_hero | slider | page_banner
-  sortOrder  Int     @default(0)
-  isActive   Boolean @default(true)
+  id        String  @id @default(cuid())
+  title     String?
+  subtitle  String?
+  imageUrl  String?
+  videoUrl  String?
+  mobileUrl String?
+  tabletUrl String?
+  ctaLabel  String?
+  ctaUrl    String?
+  placement String  @default("home_hero") // home_hero | slider | page_banner
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
 
   @@map("banners")
 }
@@ -496,26 +500,26 @@ model Media {
 // ─────────────────────────── Blog ───────────────────────────
 
 model Blog {
-  id            String         @id @default(cuid())
-  title         String
-  slug          String         @unique
-  excerpt       String?
-  content       String
-  featuredImage String?
-  status        String         @default("draft") // draft | scheduled | published
-  publishAt     DateTime?
-  views         Int            @default(0)
-  likes         Int            @default(0)
-  authorId      String
-  author        User           @relation(fields: [authorId], references: [id])
-  categoryId    String?
-  category      BlogCategory?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  tags          BlogTag[]
-  comments      BlogComment[]
-  metaTitle     String?
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
+  excerpt         String?
+  content         String
+  featuredImage   String?
+  status          String        @default("draft") // draft | scheduled | published
+  publishAt       DateTime?
+  views           Int           @default(0)
+  likes           Int           @default(0)
+  authorId        String
+  author          User          @relation(fields: [authorId], references: [id])
+  categoryId      String?
+  category        BlogCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags            BlogTag[]
+  comments        BlogComment[]
+  metaTitle       String?
   metaDescription String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@index([status, publishAt])
   @@map("blogs")
@@ -568,42 +572,42 @@ model ServiceCategory {
 }
 
 model Service {
-  id          String           @id @default(cuid())
-  name        String
-  slug        String           @unique
-  shortDesc   String?
-  description String?
-  icon        String?
-  bannerUrl   String?
-  gallery     Json? // array of media urls
-  price       Decimal?         @db.Decimal(12, 2)
-  categoryId  String?
-  category    ServiceCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  metaTitle   String?
+  id              String           @id @default(cuid())
+  name            String
+  slug            String           @unique
+  shortDesc       String?
+  description     String?
+  icon            String?
+  bannerUrl       String?
+  gallery         Json? // array of media urls
+  price           Decimal?         @db.Decimal(12, 2)
+  categoryId      String?
+  category        ServiceCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  metaTitle       String?
   metaDescription String?
-  isActive    Boolean          @default(true)
-  sortOrder   Int              @default(0)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  isActive        Boolean          @default(true)
+  sortOrder       Int              @default(0)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   @@map("services")
 }
 
 model Product {
-  id          String   @id @default(cuid())
-  name        String // ERPNext, SAP Business One, CRM, HRMS, Inventory, Manufacturing, Accounting, Payroll, Projects, Asset, Quality, Purchase, Sales
-  slug        String   @unique
-  shortDesc   String?
-  description String?
-  icon        String?
-  bannerUrl   String?
-  features    Json? // array of feature strings
-  isActive    Boolean  @default(true)
-  sortOrder   Int      @default(0)
-  metaTitle   String?
+  id              String   @id @default(cuid())
+  name            String // ERPNext, SAP Business One, CRM, HRMS, Inventory, Manufacturing, Accounting, Payroll, Projects, Asset, Quality, Purchase, Sales
+  slug            String   @unique
+  shortDesc       String?
+  description     String?
+  icon            String?
+  bannerUrl       String?
+  features        Json? // array of feature strings
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  metaTitle       String?
   metaDescription String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@map("products")
 }
@@ -656,15 +660,15 @@ model Client {
 }
 
 model Project {
-  id          String  @id @default(cuid())
-  title       String
-  slug        String  @unique
-  clientId    String?
-  client      Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  summary     String?
-  caseStudy   String?
-  imageUrl    String?
-  isActive    Boolean @default(true)
+  id        String  @id @default(cuid())
+  title     String
+  slug      String  @unique
+  clientId  String?
+  client    Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  summary   String?
+  caseStudy String?
+  imageUrl  String?
+  isActive  Boolean @default(true)
 
   @@map("projects")
 }
@@ -695,11 +699,11 @@ model Faq {
 }
 
 model GalleryItem {
-  id       String  @id @default(cuid())
-  title    String?
-  imageUrl String
-  album    String?
-  sortOrder Int    @default(0)
+  id        String  @id @default(cuid())
+  title     String?
+  imageUrl  String
+  album     String?
+  sortOrder Int     @default(0)
 
   @@map("gallery")
 }
@@ -746,25 +750,26 @@ model Application {
 // ─────────────────────────── CRM / Leads ───────────────────────────
 
 model Lead {
-  id           String     @id @default(cuid())
+  id           String       @id @default(cuid())
   name         String
   email        String?
   phone        String?
   company      String?
   message      String?
-  source       String     @default("website") // website | contact | demo | quote | newsletter | referral | manual
-  kind         String     @default("contact") // contact | demo | quote | general
-  status       String     @default("new") // new | contacted | qualified | proposal | won | lost
+  source       String       @default("website") // website | contact | demo | quote | newsletter | referral | manual
+  kind         String       @default("contact") // contact | demo | quote | general
+  status       String       @default("new") // new | contacted | qualified | proposal | won | lost
   assignedToId String?
-  assignedTo   User?      @relation("LeadAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  assignedTo   User?        @relation("LeadAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
   remarks      LeadRemark[]
   reminderAt   DateTime?
   meta         Json? // product interest, budget, page URL, UTM, etc.
   ipAddress    String?
   userAgent    String?
   country      String? // populated only if a GeoIP source is wired up; not set by default
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  opportunity  Opportunity?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 
   @@index([status, source])
   @@index([assignedToId])
@@ -781,6 +786,173 @@ model LeadRemark {
 
   @@index([leadId])
   @@map("lead_remarks")
+}
+
+// ─────────────────────────── CRM / Sales Pipeline ───────────────────────────
+// Website Lead -> Lead Qualification -> Opportunity -> Quotation -> Negotiation -> Won -> Customer -> Projects / Support / AMC
+
+model Opportunity {
+  id                String              @id @default(cuid())
+  title             String
+  leadId            String?             @unique
+  lead              Lead?               @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  company           String?
+  contactName       String?
+  contactEmail      String?
+  contactPhone      String?
+  stage             String              @default("qualification") // qualification | quotation | negotiation | won | lost
+  value             Decimal?            @db.Decimal(12, 2)
+  currency          String              @default("INR")
+  probability       Int                 @default(10)
+  expectedCloseDate DateTime?
+  assignedToId      String?
+  assignedTo        User?               @relation("OpportunityAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  lostReason        String?
+  wonAt             DateTime?
+  quotations        Quotation[]
+  remarks           OpportunityRemark[]
+  customer          Customer?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@index([stage])
+  @@index([assignedToId])
+  @@map("opportunities")
+}
+
+model OpportunityRemark {
+  id            String      @id @default(cuid())
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  authorId      String?
+  content       String
+  createdAt     DateTime    @default(now())
+
+  @@index([opportunityId])
+  @@map("opportunity_remarks")
+}
+
+model Quotation {
+  id              String          @id @default(cuid())
+  quotationNumber String          @unique
+  opportunityId   String
+  opportunity     Opportunity     @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  items           QuotationItem[]
+  subtotal        Decimal         @default(0) @db.Decimal(12, 2)
+  discount        Decimal         @default(0) @db.Decimal(12, 2)
+  tax             Decimal         @default(0) @db.Decimal(12, 2)
+  total           Decimal         @default(0) @db.Decimal(12, 2)
+  currency        String          @default("INR")
+  status          String          @default("draft") // draft | sent | accepted | rejected | expired
+  validUntil      DateTime?
+  notes           String?
+  sentAt          DateTime?
+  respondedAt     DateTime?
+  createdById     String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([opportunityId, status])
+  @@map("quotations")
+}
+
+model QuotationItem {
+  id          String    @id @default(cuid())
+  quotationId String
+  quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Decimal   @default(1) @db.Decimal(12, 2)
+  unitPrice   Decimal   @db.Decimal(12, 2)
+  amount      Decimal   @db.Decimal(12, 2)
+  sortOrder   Int       @default(0)
+
+  @@index([quotationId])
+  @@map("quotation_items")
+}
+
+model Customer {
+  id               String          @id @default(cuid())
+  opportunityId    String?         @unique
+  opportunity      Opportunity?    @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
+  companyName      String
+  contactName      String?
+  email            String?
+  phone            String?
+  billingAddress   String?
+  shippingAddress  String?
+  gstNumber        String?
+  panNumber        String?
+  accountManagerId String?
+  accountManager   User?           @relation("CustomerAccountManager", fields: [accountManagerId], references: [id], onDelete: SetNull)
+  status           String          @default("active") // active | inactive | churned
+  crmProjects      CrmProject[]
+  supportTickets   SupportTicket[]
+  amcContracts     AmcContract[]
+  convertedAt      DateTime        @default(now())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([status])
+  @@index([accountManagerId])
+  @@map("customers")
+}
+
+model CrmProject {
+  id               String    @id @default(cuid())
+  customerId       String
+  customer         Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  title            String
+  description      String?
+  status           String    @default("planning") // planning | in_progress | on_hold | completed | cancelled
+  budget           Decimal?  @db.Decimal(12, 2)
+  currency         String    @default("INR")
+  startDate        DateTime?
+  endDate          DateTime?
+  projectManagerId String?
+  projectManager   User?     @relation("CrmProjectManager", fields: [projectManagerId], references: [id], onDelete: SetNull)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([customerId, status])
+  @@map("customer_projects")
+}
+
+model SupportTicket {
+  id           String    @id @default(cuid())
+  customerId   String
+  customer     Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  subject      String
+  description  String?
+  priority     String    @default("medium") // low | medium | high | urgent
+  status       String    @default("open") // open | in_progress | resolved | closed
+  assignedToId String?
+  assignedTo   User?     @relation("SupportTicketAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  resolvedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([customerId, status])
+  @@index([assignedToId])
+  @@map("support_tickets")
+}
+
+model AmcContract {
+  id                String    @id @default(cuid())
+  customerId        String
+  customer          Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  contractNumber    String    @unique
+  startDate         DateTime
+  endDate           DateTime
+  value             Decimal?  @db.Decimal(12, 2)
+  currency          String    @default("INR")
+  status            String    @default("active") // active | expired | cancelled | renewed
+  renewalReminderAt DateTime?
+  terms             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([customerId, status])
+  @@map("amc_contracts")
 }
 
 model NewsletterSubscriber {
@@ -826,15 +998,15 @@ model Popup {
 // ─────────────────────────── Logs, Analytics, Notifications ───────────────────────────
 
 model ActivityLog {
-  id        String   @id @default(cuid())
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  action    String // created | updated | deleted | exported | login | logout ...
-  resource  String
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String // created | updated | deleted | exported | login | logout ...
+  resource   String
   resourceId String?
-  detail    Json?
-  ip        String?
-  createdAt DateTime @default(now())
+  detail     Json?
+  ip         String?
+  createdAt  DateTime @default(now())
 
   @@index([userId])
   @@index([resource, createdAt])
@@ -856,13 +1028,13 @@ model LoginLog {
 }
 
 model ErrorLog {
-  id        String   @id @default(cuid())
-  message   String
-  stack     String?
-  path      String?
-  method    String?
+  id         String   @id @default(cuid())
+  message    String
+  stack      String?
+  path       String?
+  method     String?
   statusCode Int?
-  createdAt DateTime @default(now())
+  createdAt  DateTime @default(now())
 
   @@map("error_logs")
 }
@@ -880,14 +1052,14 @@ model PageView {
 }
 
 model Notification {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String
   body      String?
-  kind      String   @default("info") // info | lead | application | system
+  kind      String    @default("info") // info | lead | application | system
   readAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   @@index([userId, readAt])
   @@map("notifications")
