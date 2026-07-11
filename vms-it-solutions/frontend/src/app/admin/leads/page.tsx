@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { api, API_URL, getAccessToken } from "@/lib/api";
 
 interface Lead {
@@ -20,6 +21,7 @@ const STATUS_STYLE: Record<string, string> = {
 };
 
 export default function LeadsPage() {
+  const router = useRouter();
   const [data, setData] = useState<LeadList | null>(null);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -31,6 +33,10 @@ export default function LeadsPage() {
   const [formError, setFormError] = useState("");
   const [saving, setSaving] = useState(false);
   const [users, setUsers] = useState<UserOption[]>([]);
+  const [converting, setConverting] = useState(false);
+  const [convertError, setConvertError] = useState("");
+  const [merging, setMerging] = useState<Lead | null>(null);
+  const [mergeTargetId, setMergeTargetId] = useState("");
 
   const load = useCallback(async () => {
     try {
@@ -47,6 +53,48 @@ export default function LeadsPage() {
 
   async function updateStatus(id: string, next: string) {
     await api(`/leads/${id}`, { method: "PATCH", body: JSON.stringify({ status: next }) });
+    load();
+  }
+
+  async function convertToOpportunity(lead: Lead) {
+    setConverting(true);
+    setConvertError("");
+    try {
+      const opp = await api<{ id: string }>(`/leads/${lead.id}/convert-to-opportunity`, { method: "POST" });
+      router.push(`/admin/opportunities/${opp.id}`);
+    } catch (e) {
+      setConvertError(e instanceof Error ? e.message : "Could not convert to opportunity");
+    } finally {
+      setConverting(false);
+    }
+  }
+
+  async function convertToCustomer(lead: Lead) {
+    setConverting(true);
+    setConvertError("");
+    try {
+      const customer = await api<{ id: string }>(`/leads/${lead.id}/convert-to-customer`, { method: "POST" });
+      router.push(`/admin/customers/${customer.id}`);
+    } catch (e) {
+      setConvertError(e instanceof Error ? e.message : "Could not convert to customer");
+    } finally {
+      setConverting(false);
+    }
+  }
+
+  async function duplicateLead(lead: Lead) {
+    await api(`/leads/${lead.id}/duplicate`, { method: "POST" });
+    setOpen(null);
+    setPage(1);
+    load();
+  }
+
+  async function mergeLead() {
+    if (!merging || !mergeTargetId) return;
+    await api(`/leads/${merging.id}/merge`, { method: "POST", body: JSON.stringify({ mergeLeadId: mergeTargetId }) });
+    setMerging(null);
+    setMergeTargetId("");
+    setOpen(null);
     load();
   }
 
@@ -198,6 +246,42 @@ export default function LeadsPage() {
             </div>
             <div className="mt-4 font-mono-x text-[10px] uppercase tracking-widest text-slate-400">
               {open.kind} · via {open.source} · {new Date(open.createdAt).toLocaleString()}
+            </div>
+            {convertError && <p className="mt-3 text-sm text-red-600">{convertError}</p>}
+            <div className="mt-5 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+              <button disabled={converting} onClick={() => convertToOpportunity(open)} className="rounded-lg bg-cobalt px-3 py-2 text-xs font-semibold text-white transition hover:bg-cobalt-soft disabled:opacity-60">
+                Create Opportunity
+              </button>
+              <button disabled={converting} onClick={() => convertToCustomer(open)} className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 transition disabled:opacity-60">
+                Create Customer
+              </button>
+              <button onClick={() => duplicateLead(open)} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-ink transition hover:border-cobalt">
+                Duplicate
+              </button>
+              <button onClick={() => { setMerging(open); setMergeTargetId(""); }} className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-ink transition hover:border-cobalt">
+                Merge into another lead
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {merging && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-ink/50 p-5" onClick={() => setMerging(null)}>
+          <div className="w-full max-w-md rounded-2xl bg-white p-6" onClick={(e) => e.stopPropagation()}>
+            <h2 className="font-display text-lg font-semibold text-ink">Merge &quot;{merging.name}&quot;</h2>
+            <p className="mt-1 text-sm text-slate-500">Paste the ID of the lead to merge into this one. Its remarks move here and it is deleted.</p>
+            <input
+              value={mergeTargetId}
+              onChange={(e) => setMergeTargetId(e.target.value)}
+              placeholder="Lead ID to merge in"
+              className="mt-4 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-cobalt"
+            />
+            <div className="mt-5 flex justify-end gap-3">
+              <button onClick={() => setMerging(null)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-ink">Cancel</button>
+              <button disabled={!mergeTargetId} onClick={mergeLead} className="rounded-lg bg-cobalt px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-cobalt-soft disabled:opacity-60">
+                Merge
+              </button>
             </div>
           </div>
         </div>

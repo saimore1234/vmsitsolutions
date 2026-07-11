@@ -18,11 +18,14 @@ dashboardRoutes.post("/track", publicFormLimiter, asyncHandler(async (req, res) 
 
 dashboardRoutes.get("/stats", requireAuth, authorize("dashboard:view"), asyncHandler(async (_req, res) => {
   const since30d = new Date(Date.now() - 30 * 86_400_000);
+  const OPEN_STAGES = ["qualification", "quotation", "negotiation"] as const;
 
   const [
     totalLeads, newLeads, wonLeads, leadsBySource, leadsByStatus,
     pageViews30d, topPages, blogViews, openJobs, pendingApplications,
     recentLeads, recentActivity, usersCount,
+    opportunitiesByStage, openOpportunities, wonRevenueTotal, wonRevenue30d,
+    customersCount, quotationsSentCount, quotationsAcceptedCount, topOpenOpportunities,
   ] = await Promise.all([
     prisma.lead.count(),
     prisma.lead.count({ where: { status: "new" } }),
@@ -37,7 +40,22 @@ dashboardRoutes.get("/stats", requireAuth, authorize("dashboard:view"), asyncHan
     prisma.lead.findMany({ orderBy: { createdAt: "desc" }, take: 6, select: { id: true, name: true, company: true, kind: true, status: true, createdAt: true } }),
     prisma.activityLog.findMany({ orderBy: { createdAt: "desc" }, take: 10, include: { user: { select: { firstName: true, lastName: true } } } }),
     prisma.user.count({ where: { isActive: true } }),
+    prisma.opportunity.groupBy({ by: ["stage"], _count: true }),
+    prisma.opportunity.findMany({ where: { stage: { in: [...OPEN_STAGES] } }, select: { value: true, probability: true } }),
+    prisma.quotation.aggregate({ where: { status: "accepted" }, _sum: { total: true } }),
+    prisma.quotation.aggregate({ where: { status: "accepted", respondedAt: { gte: since30d } }, _sum: { total: true } }),
+    prisma.customer.count(),
+    prisma.quotation.count({ where: { status: { in: ["sent", "accepted", "rejected"] } } }),
+    prisma.quotation.count({ where: { status: "accepted" } }),
+    prisma.opportunity.findMany({
+      where: { stage: { in: [...OPEN_STAGES] } }, orderBy: { value: "desc" }, take: 6,
+      select: { id: true, title: true, company: true, stage: true, value: true, currency: true, probability: true },
+    }),
   ]);
+
+  const openPipelineValue = openOpportunities.reduce((sum, o) => sum + Number(o.value ?? 0), 0);
+  const weightedForecast = openOpportunities.reduce((sum, o) => sum + Number(o.value ?? 0) * (o.probability / 100), 0);
+  const quotationAcceptRate = quotationsSentCount ? Math.round((quotationsAcceptedCount / quotationsSentCount) * 1000) / 10 : 0;
 
   // Daily lead trend for the last 30 days
   const leads30d = await prisma.lead.findMany({ where: { createdAt: { gte: since30d } }, select: { createdAt: true } });
@@ -57,6 +75,16 @@ dashboardRoutes.get("/stats", requireAuth, authorize("dashboard:view"), asyncHan
       leadsBySource, leadsByStatus, topPages,
       leadTrend: Object.entries(trend).map(([date, count]) => ({ date, count })),
       recentLeads, recentActivity,
+      pipeline: {
+        cards: {
+          openPipelineValue, weightedForecast,
+          wonRevenueTotal: Number(wonRevenueTotal._sum.total ?? 0),
+          wonRevenue30d: Number(wonRevenue30d._sum.total ?? 0),
+          customersCount, quotationAcceptRate,
+        },
+        stageFunnel: opportunitiesByStage.map((s) => ({ stage: s.stage, count: s._count })),
+        topOpenOpportunities,
+      },
     },
   });
 }));

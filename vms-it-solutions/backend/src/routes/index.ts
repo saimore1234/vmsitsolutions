@@ -13,6 +13,12 @@ import { pageRoutes } from "../modules/pages/pages.routes";
 import { dashboardRoutes } from "../modules/dashboard/dashboard.routes";
 import { popupRoutes } from "../modules/popups/popups.routes";
 import { brandingRoutes } from "../modules/branding/branding.routes";
+import { opportunityRoutes } from "../modules/opportunities/opportunities.routes";
+import { quotationRoutes } from "../modules/quotations/quotations.routes";
+import { customerRoutes } from "../modules/customers/customers.routes";
+import { crmProjectRoutes } from "../modules/crmProjects/crmProjects.routes";
+import { supportTicketRoutes } from "../modules/supportTickets/supportTickets.routes";
+import { amcContractRoutes } from "../modules/amcContracts/amcContracts.routes";
 
 export const apiV1 = Router();
 
@@ -24,6 +30,12 @@ apiV1.use("/roles", roleRoutes);
 apiV1.use("/settings/branding", brandingRoutes);
 apiV1.use("/settings", settingsRoutes);
 apiV1.use("/leads", leadRoutes);
+apiV1.use("/opportunities", opportunityRoutes);
+apiV1.use("/quotations", quotationRoutes);
+apiV1.use("/customers", customerRoutes);
+apiV1.use("/crm-projects", crmProjectRoutes);
+apiV1.use("/support-tickets", supportTicketRoutes);
+apiV1.use("/amc-contracts", amcContractRoutes);
 apiV1.use("/blogs", blogRoutes);
 apiV1.use("/careers", careerRoutes);
 apiV1.use("/media", mediaRoutes);

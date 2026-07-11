@@ -7,17 +7,21 @@ const RESOURCES = [
   "dashboard", "users", "roles", "settings", "leads", "blogs", "pages", "media",
   "services", "products", "industries", "team", "clients", "testimonials",
   "faq", "careers", "logs", "popups",
+  "opportunities", "quotations", "customers", "crm-projects", "support-tickets", "amc-contracts",
 ];
 const ACTIONS = ["view", "create", "edit", "delete", "approve", "export", "import", "print", "manage"];
+
+const SALES_RESOURCES = ["leads", "opportunities", "quotations", "customers"];
+const SUPPORT_TICKET_RESOURCES = ["leads", "support-tickets"];
 
 const SYSTEM_ROLES: { name: string; slug: string; grants: (r: string, a: string) => boolean }[] = [
   { name: "Super Admin", slug: "super-admin", grants: () => true },
   { name: "Admin", slug: "admin", grants: (r) => r !== "roles" },
   { name: "Manager", slug: "manager", grants: (r, a) => !["users", "roles", "settings", "logs"].includes(r) && a !== "delete" },
-  { name: "Sales", slug: "sales", grants: (r, a) => (r === "leads" && a !== "manage") || (r === "dashboard" && a === "view") },
+  { name: "Sales", slug: "sales", grants: (r, a) => (SALES_RESOURCES.includes(r) && a !== "manage") || (r === "dashboard" && a === "view") || (r === "crm-projects" && a === "view") },
   { name: "Marketing", slug: "marketing", grants: (r, a) => ["blogs", "pages", "media", "testimonials", "faq", "popups"].includes(r) && a !== "manage" },
   { name: "HR", slug: "hr", grants: (r, a) => (["careers", "team"].includes(r) && a !== "manage") || (r === "dashboard" && a === "view") },
-  { name: "Support", slug: "support", grants: (r, a) => r === "leads" && ["view", "edit"].includes(a) },
+  { name: "Support", slug: "support", grants: (r, a) => (SUPPORT_TICKET_RESOURCES.includes(r) && ["view", "edit"].includes(a)) || (["customers", "amc-contracts", "crm-projects"].includes(r) && a === "view") },
   { name: "Developer", slug: "developer", grants: (r, a) => ["pages", "media", "logs"].includes(r) && ["view", "create", "edit"].includes(a) },
   { name: "Employee", slug: "employee", grants: (r, a) => r === "dashboard" && a === "view" },
   { name: "Customer", slug: "customer", grants: () => false },
