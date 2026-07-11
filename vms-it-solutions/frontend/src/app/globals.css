@@ -16,6 +16,11 @@
   --font-mono-x: var(--font-jetbrains), ui-monospace, monospace;
 }
 
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
 html { scroll-behavior: smooth; }
 body { font-family: var(--font-body); }
 
@@ -35,7 +40,46 @@ body { font-family: var(--font-body); }
 @keyframes glow { 0%,100% { opacity: .55 } 50% { opacity: 1 } }
 .node-glow { animation: glow 3.2s ease-in-out infinite; }
 
+/* Smooth default for anything using Tailwind's transition utilities */
+a, button, input, textarea, select {
+  transition-timing-function: var(--ease-out);
+}
+
+/* Scroll reveal — toggled by the Reveal component via IntersectionObserver */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+.animate-fade-in { animation: fadeIn 0.5s var(--ease-out) both; }
+.animate-fade-in-up { animation: fadeInUp 0.5s var(--ease-out) both; }
+.animate-scale-in { animation: scaleIn 0.22s var(--ease-out) both; }
+.animate-slide-down { animation: slideDown 0.22s var(--ease-out) both; }
+
+/* Shared modal shell — fading backdrop + scaling panel */
+.modal-backdrop { animation: fadeIn 0.2s var(--ease-out) both; }
+.modal-panel { animation: scaleIn 0.22s var(--ease-out) both; }
+
 @media (prefers-reduced-motion: reduce) {
   .flow-line, .node-glow { animation: none; }
   html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .animate-fade-in, .animate-fade-in-up, .animate-scale-in, .animate-slide-down,
+  .modal-backdrop, .modal-panel {
+    animation: none;
+  }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

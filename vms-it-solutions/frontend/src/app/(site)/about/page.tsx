@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/site/PageHero";
+import { Reveal } from "@/components/site/Reveal";
 import { getSiteSettings, companyOrDefault } from "@/lib/site-settings";
 
 export const revalidate = 60;
@@ -25,11 +26,11 @@ export default async function AboutPage() {
       <PageHero eyebrow="About" title={`About ${company.companyName ?? "us"}`} subtitle={company.tagline ?? undefined} />
       <section className="bg-paper py-20">
         <div className="mx-auto max-w-3xl space-y-10 px-5">
-          {hasContent ? blocks.filter(([, v]) => v).map(([heading, body]) => (
-            <div key={heading}>
+          {hasContent ? blocks.filter(([, v]) => v).map(([heading, body], idx) => (
+            <Reveal key={heading} delayMs={idx * 80}>
               <h2 className="font-mono-x text-[10px] uppercase tracking-widest text-slate-400">{heading}</h2>
               <p className="mt-3 whitespace-pre-wrap text-[15px] leading-relaxed text-slate-700">{body}</p>
-            </div>
+            </Reveal>
           )) : (
             <p className="text-sm text-slate-400">Company details haven&apos;t been added in the admin panel yet.</p>
           )}

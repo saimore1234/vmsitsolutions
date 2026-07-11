@@ -1,5 +1,6 @@
 /* Public site sections. Server-renderable except where marked "use client". */
 import Link from "next/link";
+import { Reveal } from "./Reveal";
 
 export interface MenuItem { id: string; label: string; url: string }
 export interface Company { companyName?: string; shortName?: string; tagline?: string; email?: string | null; phone?: string | null; whatsapp?: string | null; city?: string | null; workingHours?: string | null }
@@ -70,7 +71,7 @@ function ModuleGraph() {
 export function Hero({ company }: { company: Company }) {
   return (
     <section className="relative overflow-hidden bg-ink pb-24 pt-36 text-white">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 lg:grid-cols-2">
+      <div className="mx-auto grid max-w-6xl animate-fade-in-up items-center gap-12 px-5 lg:grid-cols-2">
         <div>
           <p className="eyebrow text-cyan-x">ERPNext · SAP Business One · Mumbai, India</p>
           <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
@@ -86,10 +87,10 @@ export function Hero({ company }: { company: Company }) {
               : "VMS IT Solutions implements and supports ERP for mid-market manufacturers and distributors — fixed scope, fixed timeline, GST-ready from day one."}
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-4">
-            <Link href="/book-demo" className="rounded-lg bg-cobalt px-6 py-3 text-sm font-semibold text-white transition hover:bg-cobalt-soft">
+            <Link href="/book-demo" className="rounded-lg bg-cobalt px-6 py-3 text-sm font-semibold text-white transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-cobalt-soft hover:shadow-lg hover:shadow-cobalt/20 active:translate-y-0 active:scale-95">
               Book a live demo
             </Link>
-            <Link href="/services" className="rounded-lg border border-line px-6 py-3 text-sm font-semibold text-slate-x transition hover:border-cobalt hover:text-white">
+            <Link href="/services" className="rounded-lg border border-line px-6 py-3 text-sm font-semibold text-slate-x transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-cobalt hover:text-white active:translate-y-0 active:scale-95">
               Explore services
             </Link>
           </div>
@@ -110,20 +111,23 @@ export function ProductsSection({ products }: { products: Product[] }) {
   return (
     <section className="bg-paper py-24" id="products">
       <div className="mx-auto max-w-6xl px-5">
-        <p className="eyebrow text-cobalt">Products</p>
-        <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold tracking-tight text-ink">
-          The modules your operation actually runs on
-        </h2>
+        <Reveal>
+          <p className="eyebrow text-cobalt">Products</p>
+          <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold tracking-tight text-ink">
+            The modules your operation actually runs on
+          </h2>
+        </Reveal>
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => (
-            <Link
-              key={p.id}
-              href={`/products#${p.slug}`}
-              className="group rounded-xl border border-slate-200 bg-white p-6 transition hover:-translate-y-0.5 hover:border-cobalt/50 hover:shadow-lg hover:shadow-cobalt/5"
-            >
-              <h3 className="font-display text-[17px] font-semibold text-ink group-hover:text-cobalt">{p.name}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-500">{p.shortDesc}</p>
-            </Link>
+          {products.map((p, i) => (
+            <Reveal key={p.id} delayMs={Math.min(i, 5) * 60}>
+              <Link
+                href={`/products#${p.slug}`}
+                className="group block rounded-xl border border-slate-200 bg-white p-6 transition-all duration-200 ease-out hover:-translate-y-1 hover:border-cobalt/50 hover:shadow-lg hover:shadow-cobalt/5"
+              >
+                <h3 className="font-display text-[17px] font-semibold text-ink group-hover:text-cobalt">{p.name}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-500">{p.shortDesc}</p>
+              </Link>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -136,18 +140,22 @@ export function ServicesSection({ services }: { services: Service[] }) {
   return (
     <section className="bg-white py-24" id="services">
       <div className="mx-auto max-w-6xl px-5">
-        <p className="eyebrow text-cobalt">Services</p>
-        <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold tracking-tight text-ink">
-          From first workshop to years of support
-        </h2>
+        <Reveal>
+          <p className="eyebrow text-cobalt">Services</p>
+          <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold tracking-tight text-ink">
+            From first workshop to years of support
+          </h2>
+        </Reveal>
         <div className="mt-12 grid gap-x-10 gap-y-8 md:grid-cols-2">
-          {services.map((s) => (
-            <Link key={s.id} href={`/services#${s.slug}`} className="group flex gap-4 border-l-2 border-cobalt/30 pl-5">
-              <div>
-                <h3 className="font-display text-base font-semibold text-ink group-hover:text-cobalt">{s.name}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{s.shortDesc}</p>
-              </div>
-            </Link>
+          {services.map((s, i) => (
+            <Reveal key={s.id} delayMs={Math.min(i, 5) * 60}>
+              <Link href={`/services#${s.slug}`} className="group flex gap-4 border-l-2 border-cobalt/30 pl-5 transition-colors duration-200 ease-out hover:border-cobalt">
+                <div>
+                  <h3 className="font-display text-base font-semibold text-ink transition-colors group-hover:text-cobalt">{s.name}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{s.shortDesc}</p>
+                </div>
+              </Link>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -161,18 +169,20 @@ export function TestimonialsSection({ items }: { items: Testimonial[] }) {
   return (
     <section className="bg-ink py-24 text-white">
       <div className="mx-auto max-w-6xl px-5">
-        <p className="eyebrow text-cyan-x">Client outcomes</p>
+        <Reveal><p className="eyebrow text-cyan-x">Client outcomes</p></Reveal>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {items.map((t) => (
-            <figure key={t.id} className="rounded-xl border border-line bg-ink-2 p-6">
-              <blockquote className="text-sm leading-relaxed text-slate-300">“{t.content}”</blockquote>
-              <figcaption className="mt-5">
-                <div className="font-display text-sm font-semibold">{t.name}</div>
-                <div className="font-mono-x text-[11px] uppercase tracking-widest text-slate-x">
-                  {[t.role, t.company].filter(Boolean).join(" · ")}
-                </div>
-              </figcaption>
-            </figure>
+          {items.map((t, i) => (
+            <Reveal key={t.id} delayMs={Math.min(i, 5) * 60}>
+              <figure className="rounded-xl border border-line bg-ink-2 p-6 transition-all duration-200 ease-out hover:-translate-y-1 hover:border-cobalt/40">
+                <blockquote className="text-sm leading-relaxed text-slate-300">“{t.content}”</blockquote>
+                <figcaption className="mt-5">
+                  <div className="font-display text-sm font-semibold">{t.name}</div>
+                  <div className="font-mono-x text-[11px] uppercase tracking-widest text-slate-x">
+                    {[t.role, t.company].filter(Boolean).join(" · ")}
+                  </div>
+                </figcaption>
+              </figure>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -186,15 +196,15 @@ export function FaqSection({ items }: { items: Faq[] }) {
   return (
     <section className="bg-paper py-24">
       <div className="mx-auto max-w-3xl px-5">
-        <p className="eyebrow text-cobalt">Questions we hear in every first call</p>
+        <Reveal><p className="eyebrow text-cobalt">Questions we hear in every first call</p></Reveal>
         <div className="mt-8 divide-y divide-slate-200">
           {items.map((f) => (
             <details key={f.id} className="group py-5">
               <summary className="flex cursor-pointer list-none items-center justify-between font-display text-[15px] font-semibold text-ink">
                 {f.question}
-                <span className="ml-4 text-cobalt transition-transform group-open:rotate-45">+</span>
+                <span className="ml-4 text-cobalt transition-transform duration-300 ease-out group-open:rotate-45">+</span>
               </summary>
-              <p className="mt-3 text-sm leading-relaxed text-slate-500">{f.answer}</p>
+              <p className="mt-3 animate-fade-in-up text-sm leading-relaxed text-slate-500">{f.answer}</p>
             </details>
           ))}
         </div>

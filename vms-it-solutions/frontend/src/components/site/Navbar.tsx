@@ -49,7 +49,7 @@ export function Navbar({ company, menu, logos = [], logoSettings }: { company: C
             <Link
               key={item.id}
               href={item.url}
-              className={`text-[13px] font-medium transition-colors ${isActive(pathname, item.url) ? "text-white" : "text-slate-x hover:text-white"}`}
+              className={`text-[13px] font-medium transition-colors duration-200 ease-out ${isActive(pathname, item.url) ? "text-white" : "text-slate-x hover:text-white"}`}
             >
               {item.label}
             </Link>
@@ -59,7 +59,7 @@ export function Navbar({ company, menu, logos = [], logoSettings }: { company: C
         <div className="flex items-center gap-3">
           <Link
             href="/book-demo"
-            className="hidden rounded-lg bg-cobalt px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-cobalt-soft sm:inline-block"
+            className="hidden rounded-lg bg-cobalt px-4 py-2 text-[13px] font-semibold text-white transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-cobalt-soft hover:shadow-lg hover:shadow-cobalt/20 active:translate-y-0 active:scale-95 sm:inline-block"
           >
             Book a demo
           </Link>
@@ -68,7 +68,7 @@ export function Navbar({ company, menu, logos = [], logoSettings }: { company: C
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
-            className="grid h-9 w-9 place-items-center rounded-lg border border-white/15 text-white md:hidden"
+            className="grid h-9 w-9 place-items-center rounded-lg border border-white/15 text-white transition-colors duration-200 ease-out hover:border-white/40 md:hidden"
           >
             {open ? (
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 1L15 15M15 1L1 15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
@@ -80,14 +80,14 @@ export function Navbar({ company, menu, logos = [], logoSettings }: { company: C
       </div>
 
       {open && (
-        <div className="border-t border-white/10 bg-ink px-5 pb-5 pt-2 md:hidden">
+        <div className="animate-slide-down border-t border-white/10 bg-ink px-5 pb-5 pt-2 md:hidden">
           <nav className="flex flex-col">
             {menu.map((item) => (
               <Link
                 key={item.id}
                 href={item.url}
                 onClick={() => setOpen(false)}
-                className={`border-b border-white/5 py-3 text-[14px] font-medium ${isActive(pathname, item.url) ? "text-white" : "text-slate-x"}`}
+                className={`border-b border-white/5 py-3 text-[14px] font-medium transition-colors duration-200 ease-out ${isActive(pathname, item.url) ? "text-white" : "text-slate-x hover:text-white"}`}
               >
                 {item.label}
               </Link>
@@ -96,7 +96,7 @@ export function Navbar({ company, menu, logos = [], logoSettings }: { company: C
           <Link
             href="/book-demo"
             onClick={() => setOpen(false)}
-            className="mt-4 block rounded-lg bg-cobalt px-4 py-2.5 text-center text-[13px] font-semibold text-white"
+            className="mt-4 block rounded-lg bg-cobalt px-4 py-2.5 text-center text-[13px] font-semibold text-white transition-all duration-200 ease-out hover:bg-cobalt-soft active:scale-95"
           >
             Book a demo
           </Link>

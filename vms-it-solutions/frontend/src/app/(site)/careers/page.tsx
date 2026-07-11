@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/site/PageHero";
+import { Reveal } from "@/components/site/Reveal";
 import { publicGet } from "@/lib/api";
 
 interface Career {
@@ -24,16 +25,18 @@ export default async function CareersPage() {
       <section className="bg-paper py-20">
         <div className="mx-auto max-w-4xl px-5">
           <div className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
-            {items.map((c) => (
-              <Link key={c.id} href={`/careers/${c.id}`} className="group flex items-center justify-between gap-4 p-6 transition hover:bg-slate-50">
-                <div>
-                  <h2 className="font-display text-base font-semibold text-ink group-hover:text-cobalt">{c.title}</h2>
-                  <p className="mt-1 text-sm text-slate-500">
-                    {[c.department, c.location, JOB_TYPE_LABEL[c.jobType] ?? c.jobType, c.experience].filter(Boolean).join(" · ")}
-                  </p>
-                </div>
-                <span className="shrink-0 text-sm font-semibold text-cobalt">Apply →</span>
-              </Link>
+            {items.map((c, i) => (
+              <Reveal key={c.id} delayMs={Math.min(i, 5) * 60}>
+                <Link href={`/careers/${c.id}`} className="group flex items-center justify-between gap-4 p-6 transition-colors duration-200 ease-out hover:bg-slate-50">
+                  <div>
+                    <h2 className="font-display text-base font-semibold text-ink group-hover:text-cobalt">{c.title}</h2>
+                    <p className="mt-1 text-sm text-slate-500">
+                      {[c.department, c.location, JOB_TYPE_LABEL[c.jobType] ?? c.jobType, c.experience].filter(Boolean).join(" · ")}
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-sm font-semibold text-cobalt transition-transform duration-200 ease-out group-hover:translate-x-1">Apply →</span>
+                </Link>
+              </Reveal>
             ))}
             {!items.length && <p className="p-6 text-sm text-slate-400">No open roles right now — check back soon.</p>}
           </div>

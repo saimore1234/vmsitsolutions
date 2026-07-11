@@ -121,8 +121,8 @@ export default function RolesPage() {
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-ink/50 p-5" onClick={() => setEditing(null)}>
-          <form onSubmit={save} onClick={(e) => e.stopPropagation()} className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-6">
+        <div className="modal-backdrop fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-ink/50 p-5" onClick={() => setEditing(null)}>
+          <form onSubmit={save} onClick={(e) => e.stopPropagation()} className="modal-panel max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-6">
             <div className="flex items-start justify-between">
               <h2 className="font-display text-lg font-semibold text-ink">{editing === "new" ? "Add role" : "Edit role"}</h2>
               <button type="button" onClick={() => setEditing(null)} className="text-slate-400 hover:text-ink">✕</button>

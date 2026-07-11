@@ -235,11 +235,11 @@ export default function PopupsPage() {
       )}
 
       {editing && (
-        <div className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-ink/50 p-5" onClick={() => setEditing(null)}>
+        <div className="modal-backdrop fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-ink/50 p-5" onClick={() => setEditing(null)}>
           <form
             onSubmit={save}
             onClick={(e) => e.stopPropagation()}
-            className="grid max-h-[90vh] w-full max-w-4xl grid-cols-1 gap-0 overflow-hidden rounded-2xl bg-white lg:grid-cols-[1.3fr_1fr]"
+            className="modal-panel grid max-h-[90vh] w-full max-w-4xl grid-cols-1 gap-0 overflow-hidden rounded-2xl bg-white lg:grid-cols-[1.3fr_1fr]"
           >
             <div className="max-h-[90vh] overflow-y-auto p-6">
               <div className="flex items-start justify-between">

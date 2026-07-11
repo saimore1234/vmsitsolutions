@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/site/Navbar";
 import { Footer, type MenuItem } from "@/components/site/sections";
 import { PopupManager } from "@/components/site/PopupManager";
+import { PageTransition } from "@/components/site/PageTransition";
 import { getSiteSettings, companyOrDefault } from "@/lib/site-settings";
 
 // Shared chrome for every public page — fetched once per request and reused by every
@@ -30,7 +31,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <>
       <Navbar company={company} menu={headerMenu} logos={settings.logos} logoSettings={settings.logoSetting} />
-      <main>{children}</main>
+      <main><PageTransition>{children}</PageTransition></main>
       <Footer company={company} menu={footerMenu} logos={settings.logos} logoSettings={settings.logoSetting} />
       <PopupManager />
     </>

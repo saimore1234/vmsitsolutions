@@ -76,8 +76,8 @@ export default function UserGroupsPage() {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-ink/50 p-5" onClick={() => { setCreating(false); setEditing(null); }}>
-          <form onSubmit={save} onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl bg-white p-6">
+        <div className="modal-backdrop fixed inset-0 z-50 grid place-items-center bg-ink/50 p-5" onClick={() => { setCreating(false); setEditing(null); }}>
+          <form onSubmit={save} onClick={(e) => e.stopPropagation()} className="modal-panel w-full max-w-sm rounded-2xl bg-white p-6">
             <h2 className="font-display text-lg font-semibold text-ink">{editing ? "Edit group" : "Add group"}</h2>
             <label className="mt-4 grid gap-1.5 text-xs font-medium text-slate-600">
               Name

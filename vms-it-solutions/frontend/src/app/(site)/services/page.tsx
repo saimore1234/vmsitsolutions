@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/site/PageHero";
+import { Reveal } from "@/components/site/Reveal";
 import { publicGet } from "@/lib/api";
 
 interface Service { id: string; name: string; slug: string; shortDesc?: string | null; description?: string | null }
@@ -21,16 +22,18 @@ export default async function ServicesPage() {
       <section className="bg-white py-20">
         <div className="mx-auto max-w-6xl px-5">
           <div className="grid gap-x-10 gap-y-8 md:grid-cols-2">
-            {items.map((s) => (
-              <div key={s.id} id={s.slug} className="scroll-mt-24 flex gap-4 border-l-2 border-cobalt/30 pl-5">
-                <div>
-                  <h2 className="font-display text-base font-semibold text-ink">{s.name}</h2>
-                  <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{s.description ?? s.shortDesc}</p>
-                  <Link href="/contact" className="mt-2 inline-block text-sm font-semibold text-cobalt hover:text-cobalt-soft">
-                    Talk to us →
-                  </Link>
+            {items.map((s, i) => (
+              <Reveal key={s.id} delayMs={Math.min(i, 5) * 60}>
+                <div id={s.slug} className="scroll-mt-24 flex gap-4 border-l-2 border-cobalt/30 pl-5 transition-colors duration-200 ease-out hover:border-cobalt">
+                  <div>
+                    <h2 className="font-display text-base font-semibold text-ink">{s.name}</h2>
+                    <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{s.description ?? s.shortDesc}</p>
+                    <Link href="/contact" className="mt-2 inline-block text-sm font-semibold text-cobalt transition-colors duration-200 ease-out hover:text-cobalt-soft">
+                      Talk to us →
+                    </Link>
+                  </div>
                 </div>
-              </div>
+              </Reveal>
             ))}
             {!items.length && <p className="text-sm text-slate-400">No services published yet.</p>}
           </div>

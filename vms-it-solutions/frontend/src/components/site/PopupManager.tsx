@@ -135,9 +135,9 @@ function PopupCard({ popup, onClose }: { popup: Popup; onClose: (track?: boolean
 
 function ModalShell({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center bg-ink/60 p-5" onClick={() => onClose()}>
-      <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <button onClick={() => onClose()} aria-label="Close" className="absolute right-4 top-4 text-slate-400 hover:text-ink">✕</button>
+    <div className="modal-backdrop fixed inset-0 z-100 grid place-items-center bg-ink/60 p-5" onClick={() => onClose()}>
+      <div className="modal-panel relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <button onClick={() => onClose()} aria-label="Close" className="absolute right-4 top-4 text-slate-400 transition-colors duration-200 ease-out hover:text-ink">✕</button>
         {children}
       </div>
     </div>
@@ -265,12 +265,12 @@ function CookieBanner({ popup, onClose }: { popup: Popup; onClose: (track?: bool
     onClose(false);
   }
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[100] border-t border-slate-200 bg-white p-5 shadow-2xl">
+    <div className="animate-fade-in-up fixed inset-x-0 bottom-0 z-100 border-t border-slate-200 bg-white p-5 shadow-2xl">
       <div className="mx-auto flex max-w-4xl flex-col items-center justify-between gap-4 sm:flex-row">
         <p className="text-sm text-slate-600">{popup.content || "We use cookies to improve your experience."}</p>
         <div className="flex shrink-0 gap-3">
-          <button onClick={() => choose(false)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-ink">Reject</button>
-          <button onClick={() => choose(true)} className="rounded-lg bg-cobalt px-4 py-2 text-sm font-semibold text-white">{popup.ctaText || "Accept"}</button>
+          <button onClick={() => choose(false)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-ink transition-colors duration-200 ease-out hover:border-slate-400">Reject</button>
+          <button onClick={() => choose(true)} className="rounded-lg bg-cobalt px-4 py-2 text-sm font-semibold text-white transition-all duration-200 ease-out hover:bg-cobalt-soft active:scale-95">{popup.ctaText || "Accept"}</button>
         </div>
       </div>
     </div>
