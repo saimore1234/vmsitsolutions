@@ -1,0 +1,33 @@
+import { Router } from "express";
+import { authRoutes } from "../modules/auth/auth.routes";
+import { userRoutes, invitationRoutes } from "../modules/users/users.routes";
+import { userGroupRoutes } from "../modules/users/userGroups.routes";
+import { roleRoutes } from "../modules/roles/roles.routes";
+import { settingsRoutes } from "../modules/company/settings.routes";
+import { leadRoutes } from "../modules/leads/leads.routes";
+import { blogRoutes } from "../modules/blogs/blogs.routes";
+import { catalogRoutes } from "../modules/services/catalog.routes";
+import { careerRoutes } from "../modules/careers/careers.routes";
+import { mediaRoutes } from "../modules/media/media.routes";
+import { pageRoutes } from "../modules/pages/pages.routes";
+import { dashboardRoutes } from "../modules/dashboard/dashboard.routes";
+import { popupRoutes } from "../modules/popups/popups.routes";
+import { brandingRoutes } from "../modules/branding/branding.routes";
+
+export const apiV1 = Router();
+
+apiV1.use("/auth", authRoutes);
+apiV1.use("/users", userRoutes);
+apiV1.use("/user-groups", userGroupRoutes);
+apiV1.use("/invitations", invitationRoutes);
+apiV1.use("/roles", roleRoutes);
+apiV1.use("/settings/branding", brandingRoutes);
+apiV1.use("/settings", settingsRoutes);
+apiV1.use("/leads", leadRoutes);
+apiV1.use("/blogs", blogRoutes);
+apiV1.use("/careers", careerRoutes);
+apiV1.use("/media", mediaRoutes);
+apiV1.use("/pages", pageRoutes);
+apiV1.use("/dashboard", dashboardRoutes);
+apiV1.use("/popups", popupRoutes);
+apiV1.use("/", catalogRoutes); // /services /products /industries /team /clients /testimonials /faq /branches /banners
