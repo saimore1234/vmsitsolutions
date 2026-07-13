@@ -18,20 +18,22 @@ export default async function BlogListPage() {
   return (
     <>
       <PageHero eyebrow="Blog" title="Notes from ERP implementations" subtitle="What we learn shipping ERPNext and SAP Business One for manufacturers and distributors." />
-      <section className="bg-paper py-20">
-        <div className="mx-auto max-w-6xl px-5">
+      <section className="relative py-14">
+        <div className="relative mx-auto max-w-6xl px-5">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((b, i) => (
               <Reveal key={b.id} delayMs={Math.min(i, 5) * 60}>
-                <Link href={`/blog/${b.slug}`} className="group block overflow-hidden rounded-xl border border-slate-200 bg-white transition-all duration-200 ease-out hover:-translate-y-1 hover:border-cobalt/50 hover:shadow-lg hover:shadow-cobalt/5">
+                <Link href={`/blog/${b.slug}`} className="group glass block overflow-hidden rounded-xl hover-glow hover:-translate-y-1">
                   {b.featuredImage && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={b.featuredImage} alt="" className="h-40 w-full object-cover" />
+                    <div className="overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={b.featuredImage} alt="" className="h-40 w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105" />
+                    </div>
                   )}
                   <div className="p-5">
-                    <h2 className="font-display text-base font-semibold text-ink group-hover:text-cobalt">{b.title}</h2>
-                    {b.excerpt && <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-slate-500">{b.excerpt}</p>}
-                    <div className="mt-4 font-mono-x text-[10px] uppercase tracking-widest text-slate-400">
+                    <h2 className="font-display text-base font-semibold text-fg transition-colors group-hover:text-gradient">{b.title}</h2>
+                    {b.excerpt && <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-haze">{b.excerpt}</p>}
+                    <div className="mt-4 font-mono-x text-[10px] uppercase tracking-widest text-haze/70">
                       {b.author && `${b.author.firstName} ${b.author.lastName} · `}
                       {b.publishAt && new Date(b.publishAt).toLocaleDateString()}
                     </div>
@@ -39,7 +41,7 @@ export default async function BlogListPage() {
                 </Link>
               </Reveal>
             ))}
-            {!items.length && <p className="text-sm text-slate-400">No posts published yet.</p>}
+            {!items.length && <p className="text-sm text-haze">No posts published yet.</p>}
           </div>
         </div>
       </section>

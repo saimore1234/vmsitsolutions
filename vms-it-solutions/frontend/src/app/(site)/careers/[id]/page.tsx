@@ -37,24 +37,25 @@ export default async function CareerDetailPage({ params }: { params: Promise<{ i
   if (!career || career.status !== "open") notFound();
 
   return (
-    <div className="bg-paper pb-20 pt-32">
-      <div className="mx-auto max-w-4xl px-5">
-        <Link href="/careers" className="text-xs text-slate-500 hover:text-cobalt">← Back to careers</Link>
-        <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-ink">{career.title}</h1>
-        <p className="mt-2 text-sm text-slate-500">
+    <div className="relative pb-14 pt-28">
+      <div className="glow-orb -left-24 top-10 h-72 w-72 bg-iris/25" />
+      <div className="relative mx-auto max-w-4xl px-5">
+        <Link href="/careers" className="text-xs text-haze transition-colors duration-200 ease-out hover:text-fg">← Back to careers</Link>
+        <h1 className="mt-6 font-display text-3xl font-semibold tracking-tight text-fg">{career.title}</h1>
+        <p className="mt-2 text-sm text-haze">
           {[career.department, career.location, JOB_TYPE_LABEL[career.jobType] ?? career.jobType, career.experience, career.salaryRange].filter(Boolean).join(" · ")}
         </p>
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
-          <div className="space-y-6">
+          <div className="glass space-y-6 rounded-xl p-6">
             <div>
-              <h2 className="font-mono-x text-[10px] uppercase tracking-widest text-slate-400">About the role</h2>
-              <p className="mt-3 whitespace-pre-wrap text-[15px] leading-relaxed text-slate-700">{career.description}</p>
+              <h2 className="font-mono-x text-[10px] uppercase tracking-widest text-aqua">About the role</h2>
+              <p className="mt-3 whitespace-pre-wrap text-[15px] leading-relaxed text-mist">{career.description}</p>
             </div>
             {career.requirements && (
               <div>
-                <h2 className="font-mono-x text-[10px] uppercase tracking-widest text-slate-400">Requirements</h2>
-                <p className="mt-3 whitespace-pre-wrap text-[15px] leading-relaxed text-slate-700">{career.requirements}</p>
+                <h2 className="font-mono-x text-[10px] uppercase tracking-widest text-aqua">Requirements</h2>
+                <p className="mt-3 whitespace-pre-wrap text-[15px] leading-relaxed text-mist">{career.requirements}</p>
               </div>
             )}
           </div>

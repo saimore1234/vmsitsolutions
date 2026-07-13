@@ -14,7 +14,7 @@ export default async function HomePage() {
     getSiteSettings(),
     publicGet<{ items: Product[] }>("/products?limit=13&sortBy=sortOrder&sortDir=asc", { items: [] }),
     publicGet<{ items: Service[] }>("/services?limit=8&sortBy=sortOrder&sortDir=asc", { items: [] }),
-    publicGet<{ items: Testimonial[] }>("/testimonials?limit=3&sortBy=sortOrder&sortDir=asc", { items: [] }),
+    publicGet<{ items: Testimonial[] }>("/testimonials?limit=12&sortBy=sortOrder&sortDir=asc", { items: [] }),
     publicGet<{ items: Faq[] }>("/faq?limit=6&sortBy=sortOrder&sortDir=asc", { items: [] }),
   ]);
   const company = companyOrDefault(settings.company);

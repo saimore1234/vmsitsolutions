@@ -32,34 +32,34 @@ export function CareerApplyForm({ careerId }: { careerId: string }) {
 
   if (state === "sent") {
     return (
-      <div className="rounded-xl border border-cobalt/30 bg-cobalt/5 p-6 text-center">
-        <div className="font-display text-lg font-semibold text-ink">Application received</div>
-        <p className="mt-2 text-sm text-slate-500">We&apos;ll review it and be in touch if there&apos;s a fit.</p>
+      <div className="glass animate-scale-in rounded-xl p-6 text-center">
+        <div className="font-display text-lg font-semibold text-fg">Application received</div>
+        <p className="mt-2 text-sm text-haze">We&apos;ll review it and be in touch if there&apos;s a fit.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={submit} className="grid gap-4 rounded-xl border border-slate-200 bg-white p-6">
-      <h3 className="font-display text-base font-semibold text-ink">Apply for this role</h3>
-      <label className="grid gap-1.5 text-xs font-medium text-slate-600">
+    <form onSubmit={submit} className="glass grid gap-4 rounded-xl p-6">
+      <h3 className="font-display text-base font-semibold text-fg">Apply for this role</h3>
+      <label className="grid gap-1.5 text-xs font-medium text-haze">
         Full name
-        <input required value={form.name} onChange={set("name")} className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-cobalt" />
+        <input required value={form.name} onChange={set("name")} className="field-glass rounded-lg px-3 py-2.5 text-sm" />
       </label>
-      <label className="grid gap-1.5 text-xs font-medium text-slate-600">
+      <label className="grid gap-1.5 text-xs font-medium text-haze">
         Email
-        <input required type="email" value={form.email} onChange={set("email")} className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-cobalt" />
+        <input required type="email" value={form.email} onChange={set("email")} className="field-glass rounded-lg px-3 py-2.5 text-sm" />
       </label>
-      <label className="grid gap-1.5 text-xs font-medium text-slate-600">
+      <label className="grid gap-1.5 text-xs font-medium text-haze">
         Phone
-        <input value={form.phone} onChange={set("phone")} className="rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-cobalt" />
+        <input value={form.phone} onChange={set("phone")} className="field-glass rounded-lg px-3 py-2.5 text-sm" />
       </label>
-      <label className="grid gap-1.5 text-xs font-medium text-slate-600">
+      <label className="grid gap-1.5 text-xs font-medium text-haze">
         Cover note
-        <textarea rows={4} value={form.coverNote} onChange={set("coverNote")} className="resize-none rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-cobalt" placeholder="Why you, why this role…" />
+        <textarea rows={4} value={form.coverNote} onChange={set("coverNote")} className="field-glass resize-none rounded-lg px-3 py-2.5 text-sm" placeholder="Why you, why this role…" />
       </label>
-      {error && <p className="text-xs text-red-600">{error}</p>}
-      <button disabled={state === "sending"} className="rounded-lg bg-cobalt px-6 py-3 text-sm font-semibold text-white transition hover:bg-cobalt-soft disabled:opacity-60">
+      {error && <p className="text-xs text-red-400">{error}</p>}
+      <button disabled={state === "sending"} className="btn-brand rounded-lg px-6 py-3 text-sm font-semibold text-white disabled:opacity-60">
         {state === "sending" ? "Submitting…" : "Submit application"}
       </button>
     </form>

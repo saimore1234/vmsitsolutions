@@ -35,12 +35,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   if (!post) notFound();
 
   return (
-    <article className="bg-paper pb-20 pt-32">
-      <div className="mx-auto max-w-3xl px-5">
-        <Link href="/blog" className="text-xs text-slate-500 hover:text-cobalt">← Back to blog</Link>
-        {post.category && <p className="eyebrow mt-6 text-cobalt">{post.category.name}</p>}
-        <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">{post.title}</h1>
-        <div className="mt-4 font-mono-x text-[11px] uppercase tracking-widest text-slate-400">
+    <article className="relative pb-14 pt-28">
+      <div className="glow-orb -left-24 top-10 h-72 w-72 bg-iris/25" />
+      <div className="relative mx-auto max-w-3xl px-5">
+        <Link href="/blog" className="text-xs text-haze transition-colors duration-200 ease-out hover:text-fg">← Back to blog</Link>
+        {post.category && <p className="eyebrow mt-6 text-aqua">{post.category.name}</p>}
+        <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-fg sm:text-4xl">{post.title}</h1>
+        <div className="mt-4 font-mono-x text-[11px] uppercase tracking-widest text-haze">
           {post.author && `${post.author.firstName} ${post.author.lastName} · `}
           {post.publishAt && new Date(post.publishAt).toLocaleDateString()}
         </div>
@@ -48,11 +49,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           // eslint-disable-next-line @next/next/no-img-element
           <img src={post.featuredImage} alt="" className="mt-8 w-full rounded-xl object-cover" />
         )}
-        <div className="prose mt-8 whitespace-pre-wrap text-[15px] leading-relaxed text-slate-700">{post.content}</div>
+        <div className="glass prose prose-invert mt-8 max-w-none whitespace-pre-wrap rounded-xl p-6 text-[15px] leading-relaxed text-mist">{post.content}</div>
         {post.tags.length > 0 && (
           <div className="mt-10 flex flex-wrap gap-2">
             {post.tags.map((t) => (
-              <span key={t.id} className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-500">{t.name}</span>
+              <span key={t.id} className="glass rounded-full px-3 py-1 text-xs text-haze">{t.name}</span>
             ))}
           </div>
         )}

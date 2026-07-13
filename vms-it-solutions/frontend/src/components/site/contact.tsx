@@ -135,33 +135,34 @@ export function ContactSection({
   }
 
   return (
-    <section id="contact" className="bg-white py-24">
-      <div className="mx-auto grid max-w-6xl animate-fade-in-up gap-14 px-5 lg:grid-cols-2">
+    <section id="contact" className="relative py-14">
+      <div className="glow-orb -right-24 top-10 h-80 w-80 bg-violet/25" />
+      <div className="relative mx-auto grid max-w-6xl animate-fade-in-up gap-10 px-5 lg:grid-cols-2">
         <div>
-          <p className="eyebrow text-cobalt">{eyebrow}</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-ink">
+          <p className="eyebrow text-aqua">{eyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-fg">
             {title}
           </h2>
-          <p className="mt-4 max-w-md text-sm leading-relaxed text-slate-500">
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-haze">
             {description}
           </p>
-          <div className="mt-8 space-y-2 font-mono-x text-xs uppercase tracking-widest text-slate-400">
-            {email && <p>Email — <span className="text-ink">{email}</span></p>}
-            {phone && <p>Phone — <span className="text-ink">{phone}</span></p>}
-            <p>Response — <span className="text-ink">within one business day</span></p>
+          <div className="mt-6 space-y-2 font-mono-x text-xs uppercase tracking-widest text-haze">
+            {email && <p>Email — <span className="text-fg">{email}</span></p>}
+            {phone && <p>Phone — <span className="text-fg">{phone}</span></p>}
+            <p>Response — <span className="text-fg">within one business day</span></p>
           </div>
         </div>
 
         {state === "sent" ? (
-          <div className="animate-scale-in grid place-items-center rounded-xl border border-cobalt/30 bg-cobalt/5 p-10 text-center">
+          <div className="glass animate-scale-in grid place-items-center rounded-xl p-10 text-center">
             <div>
-              <div className="font-display text-xl font-semibold text-ink">Thank you.</div>
-              <p className="mt-2 text-sm text-slate-500">Your enquiry has been submitted successfully.</p>
+              <div className="font-display text-xl font-semibold text-fg">Thank you.</div>
+              <p className="mt-2 text-sm text-haze">Your enquiry has been submitted successfully.</p>
               {communication?.whatsappEnabled && communication.whatsappNumber && (
                 <button
                   type="button"
                   onClick={openWhatsApp}
-                  className="mt-4 rounded-lg border border-cobalt/30 bg-cobalt/5 px-4 py-2 text-xs font-semibold text-cobalt transition-all duration-200 ease-out hover:bg-cobalt/10 active:scale-95"
+                  className="glass mt-4 rounded-lg px-4 py-2 text-xs font-semibold text-aqua transition-all duration-200 ease-out hover:text-fg active:scale-95"
                 >
                   Send via WhatsApp too
                 </button>
@@ -169,44 +170,44 @@ export function ContactSection({
             </div>
           </div>
         ) : (
-          <form onSubmit={submit} className="grid gap-4 rounded-xl border border-slate-200 bg-paper p-6 sm:grid-cols-2">
-            <label className="grid gap-1.5 text-xs font-medium text-slate-600">
+          <form onSubmit={submit} className="glass grid gap-4 rounded-xl p-6 sm:grid-cols-2">
+            <label className="grid gap-1.5 text-xs font-medium text-haze">
               Your name
-              <input required value={form.name} onChange={set("name")} className="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors duration-200 ease-out focus:border-cobalt" placeholder="Priya Sharma" />
+              <input required value={form.name} onChange={set("name")} className="field-glass rounded-lg px-3 py-2.5 text-sm" placeholder="Priya Sharma" />
             </label>
-            <label className="grid gap-1.5 text-xs font-medium text-slate-600">
+            <label className="grid gap-1.5 text-xs font-medium text-haze">
               Work email
-              <input required type="email" value={form.email} onChange={set("email")} className="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors duration-200 ease-out focus:border-cobalt" placeholder="priya@company.com" />
+              <input required type="email" value={form.email} onChange={set("email")} className="field-glass rounded-lg px-3 py-2.5 text-sm" placeholder="priya@company.com" />
             </label>
-            <label className="grid gap-1.5 text-xs font-medium text-slate-600">
+            <label className="grid gap-1.5 text-xs font-medium text-haze">
               Phone
-              <input required value={form.phone} onChange={set("phone")} className="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors duration-200 ease-out focus:border-cobalt" placeholder="+91 …" />
+              <input required value={form.phone} onChange={set("phone")} className="field-glass rounded-lg px-3 py-2.5 text-sm" placeholder="+91 …" />
             </label>
-            <label className="grid gap-1.5 text-xs font-medium text-slate-600">
+            <label className="grid gap-1.5 text-xs font-medium text-haze">
               Company
-              <input required value={form.company} onChange={set("company")} className="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors duration-200 ease-out focus:border-cobalt" placeholder="Company Pvt Ltd" />
+              <input required value={form.company} onChange={set("company")} className="field-glass rounded-lg px-3 py-2.5 text-sm" placeholder="Company Pvt Ltd" />
             </label>
-            <label className="grid gap-1.5 text-xs font-medium text-slate-600 sm:col-span-2">
+            <label className="grid gap-1.5 text-xs font-medium text-haze sm:col-span-2">
               I&apos;m interested in
-              <select required value={form.kind} onChange={set("kind")} className="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors duration-200 ease-out focus:border-cobalt">
-                <option value="demo">{KIND_LABEL.demo}</option>
-                <option value="quote">{KIND_LABEL.quote}</option>
-                <option value="contact">{KIND_LABEL.contact}</option>
+              <select required value={form.kind} onChange={set("kind")} className="field-glass rounded-lg px-3 py-2.5 text-sm">
+                <option value="demo" className="bg-void">{KIND_LABEL.demo}</option>
+                <option value="quote" className="bg-void">{KIND_LABEL.quote}</option>
+                <option value="contact" className="bg-void">{KIND_LABEL.contact}</option>
               </select>
             </label>
-            <label className="grid gap-1.5 text-xs font-medium text-slate-600 sm:col-span-2">
+            <label className="grid gap-1.5 text-xs font-medium text-haze sm:col-span-2">
               What should we know?
-              <textarea required rows={4} value={form.message} onChange={set("message")} className="resize-none rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors duration-200 ease-out focus:border-cobalt" placeholder="Industry, team size, current systems…" />
+              <textarea required rows={4} value={form.message} onChange={set("message")} className="field-glass resize-none rounded-lg px-3 py-2.5 text-sm" placeholder="Industry, team size, current systems…" />
             </label>
-            {error && <p className="animate-fade-in-up text-xs text-red-600 sm:col-span-2">{error}</p>}
+            {error && <p className="animate-fade-in-up text-xs text-red-400 sm:col-span-2">{error}</p>}
             <button
               disabled={state === "sending"}
-              className="rounded-lg bg-cobalt px-6 py-3 text-sm font-semibold text-white transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-cobalt-soft hover:shadow-lg hover:shadow-cobalt/20 active:translate-y-0 active:scale-95 disabled:pointer-events-none disabled:opacity-60 sm:col-span-2"
+              className="btn-brand rounded-lg px-6 py-3 text-sm font-semibold text-white disabled:pointer-events-none disabled:opacity-60 sm:col-span-2"
             >
               {state === "sending" ? "Sending…" : "Request demo"}
             </button>
             {communication?.recaptchaEnabled && (
-              <p className="text-[11px] text-slate-400 sm:col-span-2">Protected by reCAPTCHA.</p>
+              <p className="text-[11px] text-haze sm:col-span-2">Protected by reCAPTCHA.</p>
             )}
           </form>
         )}

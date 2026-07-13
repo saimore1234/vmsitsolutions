@@ -29,11 +29,11 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   const footerMenu = settings.menus.footer.length ? settings.menus.footer : FALLBACK_FOOTER;
 
   return (
-    <>
+    <div className="site-bg min-h-screen">
       <Navbar company={company} menu={headerMenu} logos={settings.logos} logoSettings={settings.logoSetting} />
       <main><PageTransition>{children}</PageTransition></main>
       <Footer company={company} menu={footerMenu} logos={settings.logos} logoSettings={settings.logoSetting} />
       <PopupManager />
-    </>
+    </div>
   );
 }

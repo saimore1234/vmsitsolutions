@@ -13,8 +13,8 @@ export default async function PrivacyPage() {
   return (
     <>
       <PageHero eyebrow="Legal" title="Privacy Policy" />
-      <section className="bg-paper py-20">
-        <div className="prose mx-auto max-w-3xl space-y-6 px-5 text-[15px] leading-relaxed text-slate-700">
+      <section className="relative py-14">
+        <div className="glass prose prose-invert relative mx-auto max-w-3xl space-y-6 rounded-xl p-8 text-[15px] leading-relaxed text-mist">
           <p>
             {name} (&quot;we&quot;, &quot;us&quot;) collects the information you submit through our contact, demo and
             career forms — name, email, phone and any message you provide — solely to respond to your enquiry.
@@ -25,13 +25,13 @@ export default async function PrivacyPage() {
           </p>
           <p>
             You may request access to, correction of, or deletion of your data at any time by writing to us using
-            the contact details on our <a href="/contact" className="text-cobalt hover:text-cobalt-soft">contact page</a>.
+            the contact details on our <a href="/contact" className="text-aqua hover:text-fg">contact page</a>.
           </p>
           <p>
             This site uses only the cookies necessary for the site to function and, where enabled, anonymised
             analytics to understand aggregate traffic. No personal data is sold or shared with advertisers.
           </p>
-          <p className="text-sm text-slate-400">Last updated {new Date().toLocaleDateString()}.</p>
+          <p className="text-sm text-haze">Last updated {new Date().toLocaleDateString()}.</p>
         </div>
       </section>
     </>

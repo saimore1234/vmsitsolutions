@@ -22,23 +22,23 @@ export default async function CareersPage() {
   return (
     <>
       <PageHero eyebrow="Careers" title="Build ERP that manufacturers actually use" subtitle="Open roles across implementation, engineering and customer success." />
-      <section className="bg-paper py-20">
-        <div className="mx-auto max-w-4xl px-5">
-          <div className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
+      <section className="relative py-14">
+        <div className="relative mx-auto max-w-4xl px-5">
+          <div className="glass divide-y divide-white/10 rounded-xl">
             {items.map((c, i) => (
               <Reveal key={c.id} delayMs={Math.min(i, 5) * 60}>
-                <Link href={`/careers/${c.id}`} className="group flex items-center justify-between gap-4 p-6 transition-colors duration-200 ease-out hover:bg-slate-50">
+                <Link href={`/careers/${c.id}`} className="group flex items-center justify-between gap-4 p-6 transition-colors duration-200 ease-out hover:bg-white/4">
                   <div>
-                    <h2 className="font-display text-base font-semibold text-ink group-hover:text-cobalt">{c.title}</h2>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <h2 className="font-display text-base font-semibold text-fg transition-colors group-hover:text-gradient">{c.title}</h2>
+                    <p className="mt-1 text-sm text-haze">
                       {[c.department, c.location, JOB_TYPE_LABEL[c.jobType] ?? c.jobType, c.experience].filter(Boolean).join(" · ")}
                     </p>
                   </div>
-                  <span className="shrink-0 text-sm font-semibold text-cobalt transition-transform duration-200 ease-out group-hover:translate-x-1">Apply →</span>
+                  <span className="shrink-0 text-sm font-semibold text-aqua transition-transform duration-200 ease-out group-hover:translate-x-1">Apply →</span>
                 </Link>
               </Reveal>
             ))}
-            {!items.length && <p className="p-6 text-sm text-slate-400">No open roles right now — check back soon.</p>}
+            {!items.length && <p className="p-6 text-sm text-haze">No open roles right now — check back soon.</p>}
           </div>
         </div>
       </section>

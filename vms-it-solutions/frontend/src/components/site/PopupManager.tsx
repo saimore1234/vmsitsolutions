@@ -135,9 +135,9 @@ function PopupCard({ popup, onClose }: { popup: Popup; onClose: (track?: boolean
 
 function ModalShell({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
   return (
-    <div className="modal-backdrop fixed inset-0 z-100 grid place-items-center bg-ink/60 p-5" onClick={() => onClose()}>
-      <div className="modal-panel relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <button onClick={() => onClose()} aria-label="Close" className="absolute right-4 top-4 text-slate-400 transition-colors duration-200 ease-out hover:text-ink">✕</button>
+    <div className="modal-backdrop fixed inset-0 z-100 grid place-items-center bg-scrim p-5" onClick={() => onClose()}>
+      <div className="glass modal-panel relative w-full max-w-sm rounded-2xl p-6" onClick={(e) => e.stopPropagation()}>
+        <button onClick={() => onClose()} aria-label="Close" className="absolute right-4 top-4 text-haze transition-colors duration-200 ease-out hover:text-fg">✕</button>
         {children}
       </div>
     </div>
@@ -151,15 +151,15 @@ function StandardModal({ popup, onClose }: { popup: Popup; onClose: (track?: boo
         // eslint-disable-next-line @next/next/no-img-element
         <img src={popup.imageUrl} alt="" className="mb-4 h-36 w-full rounded-lg object-cover" />
       )}
-      {popup.title && <h3 className="pr-6 font-display text-lg font-semibold text-ink">{popup.title}</h3>}
-      {popup.content && <p className="mt-2 text-sm text-slate-600">{popup.content}</p>}
+      {popup.title && <h3 className="pr-6 font-display text-lg font-semibold text-fg">{popup.title}</h3>}
+      {popup.content && <p className="mt-2 text-sm text-mist">{popup.content}</p>}
       {popup.ctaText && popup.ctaUrl && (
         <a
           href={popup.ctaUrl}
           onClick={() => track(popup.id, "conversion")}
           target={popup.ctaUrl.startsWith("http") ? "_blank" : undefined}
           rel={popup.ctaUrl.startsWith("http") ? "noopener noreferrer" : undefined}
-          className="mt-4 block w-full rounded-lg bg-cobalt px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-cobalt-soft"
+          className="btn-brand mt-4 block w-full rounded-lg px-4 py-2.5 text-center text-sm font-semibold text-white"
         >
           {popup.ctaText}
         </a>
@@ -190,18 +190,18 @@ function NewsletterModal({ popup, onClose }: { popup: Popup; onClose: (track?: b
   return (
     <ModalShell onClose={() => onClose()}>
       {state === "done" ? (
-        <p className="pr-4 text-sm text-slate-600">You&rsquo;re subscribed. Thanks for joining.</p>
+        <p className="pr-4 text-sm text-mist">You&rsquo;re subscribed. Thanks for joining.</p>
       ) : (
         <form onSubmit={submit}>
-          {popup.title && <h3 className="pr-6 font-display text-lg font-semibold text-ink">{popup.title}</h3>}
-          {popup.content && <p className="mt-2 text-sm text-slate-600">{popup.content}</p>}
+          {popup.title && <h3 className="pr-6 font-display text-lg font-semibold text-fg">{popup.title}</h3>}
+          {popup.content && <p className="mt-2 text-sm text-mist">{popup.content}</p>}
           <input
             type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
             placeholder="you@company.com"
-            className="mt-4 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-cobalt"
+            className="field-glass mt-4 w-full rounded-lg px-3 py-2.5 text-sm"
           />
-          {state === "error" && <p className="mt-2 text-xs text-red-600">Could not subscribe — try again.</p>}
-          <button disabled={state === "sending"} className="mt-3 w-full rounded-lg bg-cobalt px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cobalt-soft disabled:opacity-60">
+          {state === "error" && <p className="mt-2 text-xs text-red-400">Could not subscribe — try again.</p>}
+          <button disabled={state === "sending"} className="btn-brand mt-3 w-full rounded-lg px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60">
             {state === "sending" ? "Subscribing…" : (popup.ctaText || "Subscribe")}
           </button>
         </form>
@@ -233,23 +233,23 @@ function LeadCaptureModal({ popup, onClose }: { popup: Popup; onClose: (track?: 
   return (
     <ModalShell onClose={() => onClose()}>
       {state === "done" ? (
-        <p className="pr-4 text-sm text-slate-600">Thanks — our team will reach out within one business day.</p>
+        <p className="pr-4 text-sm text-mist">Thanks — our team will reach out within one business day.</p>
       ) : (
         <form onSubmit={submit}>
-          {popup.title && <h3 className="pr-6 font-display text-lg font-semibold text-ink">{popup.title}</h3>}
-          {popup.content && <p className="mt-2 text-sm text-slate-600">{popup.content}</p>}
+          {popup.title && <h3 className="pr-6 font-display text-lg font-semibold text-fg">{popup.title}</h3>}
+          {popup.content && <p className="mt-2 text-sm text-mist">{popup.content}</p>}
           <input
             required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             placeholder="Full name"
-            className="mt-4 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-cobalt"
+            className="field-glass mt-4 w-full rounded-lg px-3 py-2.5 text-sm"
           />
           <input
             type="email" required value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
             placeholder="you@company.com"
-            className="mt-3 w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-cobalt"
+            className="field-glass mt-3 w-full rounded-lg px-3 py-2.5 text-sm"
           />
-          {state === "error" && <p className="mt-2 text-xs text-red-600">Could not submit — try again.</p>}
-          <button disabled={state === "sending"} className="mt-3 w-full rounded-lg bg-cobalt px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cobalt-soft disabled:opacity-60">
+          {state === "error" && <p className="mt-2 text-xs text-red-400">Could not submit — try again.</p>}
+          <button disabled={state === "sending"} className="btn-brand mt-3 w-full rounded-lg px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60">
             {state === "sending" ? "Sending…" : (popup.ctaText || "Submit")}
           </button>
         </form>
@@ -265,12 +265,12 @@ function CookieBanner({ popup, onClose }: { popup: Popup; onClose: (track?: bool
     onClose(false);
   }
   return (
-    <div className="animate-fade-in-up fixed inset-x-0 bottom-0 z-100 border-t border-slate-200 bg-white p-5 shadow-2xl">
+    <div className="glass-strong animate-fade-in-up fixed inset-x-0 bottom-0 z-100 border-t border-white/10 p-5">
       <div className="mx-auto flex max-w-4xl flex-col items-center justify-between gap-4 sm:flex-row">
-        <p className="text-sm text-slate-600">{popup.content || "We use cookies to improve your experience."}</p>
+        <p className="text-sm text-mist">{popup.content || "We use cookies to improve your experience."}</p>
         <div className="flex shrink-0 gap-3">
-          <button onClick={() => choose(false)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-ink transition-colors duration-200 ease-out hover:border-slate-400">Reject</button>
-          <button onClick={() => choose(true)} className="rounded-lg bg-cobalt px-4 py-2 text-sm font-semibold text-white transition-all duration-200 ease-out hover:bg-cobalt-soft active:scale-95">{popup.ctaText || "Accept"}</button>
+          <button onClick={() => choose(false)} className="glass rounded-lg px-4 py-2 text-sm font-medium text-fg transition-colors duration-200 ease-out hover:border-white/30">Reject</button>
+          <button onClick={() => choose(true)} className="btn-brand rounded-lg px-4 py-2 text-sm font-semibold text-white">{popup.ctaText || "Accept"}</button>
         </div>
       </div>
     </div>

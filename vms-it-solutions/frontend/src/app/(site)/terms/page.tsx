@@ -13,8 +13,8 @@ export default async function TermsPage() {
   return (
     <>
       <PageHero eyebrow="Legal" title="Terms of Service" />
-      <section className="bg-paper py-20">
-        <div className="prose mx-auto max-w-3xl space-y-6 px-5 text-[15px] leading-relaxed text-slate-700">
+      <section className="relative py-14">
+        <div className="glass prose prose-invert relative mx-auto max-w-3xl space-y-6 rounded-xl p-8 text-[15px] leading-relaxed text-mist">
           <p>
             By using this website or engaging {name} for implementation, customisation or support services, you
             agree to the terms outlined here and in the statement of work signed for your specific engagement.
@@ -31,7 +31,7 @@ export default async function TermsPage() {
             We are not liable for indirect or consequential loss arising from use of this website. For engagement-
             specific liability terms, refer to your signed contract.
           </p>
-          <p className="text-sm text-slate-400">Last updated {new Date().toLocaleDateString()}.</p>
+          <p className="text-sm text-haze">Last updated {new Date().toLocaleDateString()}.</p>
         </div>
       </section>
     </>

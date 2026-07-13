@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { publicGet } from "@/lib/api";
 import "./globals.css";
@@ -33,9 +34,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+const THEME_INIT_SCRIPT = `try{if(localStorage.getItem('theme')==='light'){document.documentElement.setAttribute('data-theme','light')}}catch(e){}`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        {/* strategy="beforeInteractive" guarantees this runs before hydration/paint — a plain
+            <script> JSX tag is not reliably synchronous under React 19's resource hoisting. */}
+        <Script id="theme-init" strategy="beforeInteractive">{THEME_INIT_SCRIPT}</Script>
+      </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrains.variable} bg-paper text-slate-900 antialiased`}>
         {children}
       </body>

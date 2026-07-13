@@ -1,6 +1,8 @@
 /* Public site sections. Server-renderable except where marked "use client". */
 import Link from "next/link";
 import { Reveal } from "./Reveal";
+import { FaqAccordion } from "./FaqAccordion";
+import { TestimonialsCarousel } from "./TestimonialsCarousel";
 
 export interface MenuItem { id: string; label: string; url: string }
 export interface Company { companyName?: string; shortName?: string; tagline?: string; email?: string | null; phone?: string | null; whatsapp?: string | null; city?: string | null; workingHours?: string | null }
@@ -37,28 +39,32 @@ const EDGES: [string, string][] = [
 function ModuleGraph() {
   const byId = Object.fromEntries(NODES.map((n) => [n.id, n]));
   return (
-    <svg viewBox="0 0 760 400" className="h-full w-full" aria-hidden="true">
+    <svg viewBox="0 0 760 400" className="module-graph h-full w-full" aria-hidden="true">
       <defs>
         <radialGradient id="haze" cx="50%" cy="45%" r="60%">
-          <stop offset="0%" stopColor="#2d5bff" stopOpacity="0.16" />
-          <stop offset="100%" stopColor="#2d5bff" stopOpacity="0" />
+          <stop offset="0%" stopColor="#6d5ef8" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="#6d5ef8" stopOpacity="0" />
         </radialGradient>
+        <linearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#6d5ef8" />
+          <stop offset="100%" stopColor="#2fe6d4" />
+        </linearGradient>
       </defs>
       <rect width="760" height="400" fill="url(#haze)" />
       {EDGES.map(([a, b]) => (
         <line
           key={`${a}-${b}`}
           x1={byId[a].x} y1={byId[a].y} x2={byId[b].x} y2={byId[b].y}
-          stroke="#2d5bff" strokeOpacity="0.55" strokeWidth="1.4" className="flow-line"
+          stroke="url(#edgeGrad)" strokeOpacity="0.6" strokeWidth="1.4" className="flow-line"
         />
       ))}
       {NODES.map((n, i) => (
         <g key={n.id} className="node-glow" style={{ animationDelay: `${i * 0.4}s` }}>
-          <circle cx={n.x} cy={n.y} r="26" fill="#0d1322" stroke="#2d5bff" strokeOpacity="0.7" strokeWidth="1.4" />
-          <circle cx={n.x} cy={n.y} r="5" fill="#22d3ee" />
+          <circle cx={n.x} cy={n.y} r="26" fill="rgba(255,255,255,0.04)" stroke="#6d5ef8" strokeOpacity="0.7" strokeWidth="1.4" />
+          <circle cx={n.x} cy={n.y} r="5" fill="#2fe6d4" />
           <text
             x={n.x} y={n.y + 44} textAnchor="middle"
-            fill="#8a94a8" fontSize="11" fontFamily="var(--font-jetbrains)" letterSpacing="0.08em"
+            fill="#8892ab" fontSize="11" fontFamily="var(--font-jetbrains)" letterSpacing="0.08em"
           >
             {n.label.toUpperCase()}
           </text>
@@ -70,31 +76,36 @@ function ModuleGraph() {
 
 export function Hero({ company }: { company: Company }) {
   return (
-    <section className="relative overflow-hidden bg-ink pb-24 pt-36 text-white">
-      <div className="mx-auto grid max-w-6xl animate-fade-in-up items-center gap-12 px-5 lg:grid-cols-2">
+    <section className="relative overflow-hidden pb-14 pt-24 text-fg">
+      <div className="glow-orb -left-32 -top-32 h-96 w-96 bg-iris/40" />
+      <div className="glow-orb -right-24 top-20 h-80 w-80 bg-aqua/25" />
+      <div className="grid-texture absolute inset-0" />
+      <div className="relative mx-auto grid max-w-6xl animate-fade-in-up items-center gap-10 px-5 lg:grid-cols-2">
         <div>
-          <p className="eyebrow text-cyan-x">ERPNext · SAP Business One · Mumbai, India</p>
-          <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
+          <p className="eyebrow inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-aqua">
+            ERPNext · SAP Business One · Mumbai, India
+          </p>
+          <h1 className="mt-4 font-display text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.4rem]">
             Every department.
             <br />
             One system.
             <br />
-            <span className="text-cobalt-soft">Live in 8–16 weeks.</span>
+            <span className="text-gradient">Live in 8–16 weeks.</span>
           </h1>
-          <p className="mt-6 max-w-md text-[15px] leading-relaxed text-slate-x">
+          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-mist">
             {company.tagline
               ? `${company.companyName ?? "VMS IT Solutions"} — ${company.tagline}.`
               : "VMS IT Solutions implements and supports ERP for mid-market manufacturers and distributors — fixed scope, fixed timeline, GST-ready from day one."}
           </p>
-          <div className="mt-9 flex flex-wrap items-center gap-4">
-            <Link href="/book-demo" className="rounded-lg bg-cobalt px-6 py-3 text-sm font-semibold text-white transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-cobalt-soft hover:shadow-lg hover:shadow-cobalt/20 active:translate-y-0 active:scale-95">
+          <div className="mt-7 flex flex-wrap items-center gap-4">
+            <Link href="/book-demo" className="btn-brand rounded-lg px-6 py-3 text-sm font-semibold text-white">
               Book a live demo
             </Link>
-            <Link href="/services" className="rounded-lg border border-line px-6 py-3 text-sm font-semibold text-slate-x transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-cobalt hover:text-white active:translate-y-0 active:scale-95">
+            <Link href="/services" className="glass hover-glow rounded-lg px-6 py-3 text-sm font-semibold text-mist hover:-translate-y-0.5 hover:text-fg active:translate-y-0 active:scale-95">
               Explore services
             </Link>
           </div>
-          <p className="mt-8 font-mono-x text-xs text-slate-x">
+          <p className="mt-6 font-mono-x text-xs text-haze">
             120+ go-lives · 14 industries · 99.9% hosted uptime
           </p>
         </div>
@@ -109,23 +120,23 @@ export function Hero({ company }: { company: Company }) {
 /* ─────────────── Products grid ─────────────── */
 export function ProductsSection({ products }: { products: Product[] }) {
   return (
-    <section className="bg-paper py-24" id="products">
-      <div className="mx-auto max-w-6xl px-5">
+    <section className="relative py-14" id="products">
+      <div className="relative mx-auto max-w-6xl px-5">
         <Reveal>
-          <p className="eyebrow text-cobalt">Products</p>
-          <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold tracking-tight text-ink">
+          <p className="eyebrow text-aqua">Products</p>
+          <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold tracking-tight text-fg">
             The modules your operation actually runs on
           </h2>
         </Reveal>
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((p, i) => (
             <Reveal key={p.id} delayMs={Math.min(i, 5) * 60}>
               <Link
                 href={`/products#${p.slug}`}
-                className="group block rounded-xl border border-slate-200 bg-white p-6 transition-all duration-200 ease-out hover:-translate-y-1 hover:border-cobalt/50 hover:shadow-lg hover:shadow-cobalt/5"
+                className="group glass block rounded-xl p-6 hover-glow hover:-translate-y-1"
               >
-                <h3 className="font-display text-[17px] font-semibold text-ink group-hover:text-cobalt">{p.name}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-500">{p.shortDesc}</p>
+                <h3 className="font-display text-[17px] font-semibold text-fg transition-colors group-hover:text-gradient">{p.name}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-haze">{p.shortDesc}</p>
               </Link>
             </Reveal>
           ))}
@@ -138,21 +149,22 @@ export function ProductsSection({ products }: { products: Product[] }) {
 /* ─────────────── Services ─────────────── */
 export function ServicesSection({ services }: { services: Service[] }) {
   return (
-    <section className="bg-white py-24" id="services">
-      <div className="mx-auto max-w-6xl px-5">
+    <section className="relative py-14" id="services">
+      <div className="relative mx-auto max-w-6xl px-5">
         <Reveal>
-          <p className="eyebrow text-cobalt">Services</p>
-          <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold tracking-tight text-ink">
+          <p className="eyebrow text-aqua">Services</p>
+          <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold tracking-tight text-fg">
             From first workshop to years of support
           </h2>
         </Reveal>
-        <div className="mt-12 grid gap-x-10 gap-y-8 md:grid-cols-2">
+        <div className="mt-8 grid gap-5 md:grid-cols-2">
           {services.map((s, i) => (
             <Reveal key={s.id} delayMs={Math.min(i, 5) * 60}>
-              <Link href={`/services#${s.slug}`} className="group flex gap-4 border-l-2 border-cobalt/30 pl-5 transition-colors duration-200 ease-out hover:border-cobalt">
+              <Link href={`/services#${s.slug}`} className="group glass flex gap-4 rounded-xl p-5 hover-glow hover:-translate-y-1">
+                <span className="btn-brand mt-1 h-2 w-2 shrink-0 rounded-full" />
                 <div>
-                  <h3 className="font-display text-base font-semibold text-ink transition-colors group-hover:text-cobalt">{s.name}</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{s.shortDesc}</p>
+                  <h3 className="font-display text-base font-semibold text-fg transition-colors group-hover:text-gradient">{s.name}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-haze">{s.shortDesc}</p>
                 </div>
               </Link>
             </Reveal>
@@ -167,23 +179,11 @@ export function ServicesSection({ services }: { services: Service[] }) {
 export function TestimonialsSection({ items }: { items: Testimonial[] }) {
   if (!items.length) return null;
   return (
-    <section className="bg-ink py-24 text-white">
-      <div className="mx-auto max-w-6xl px-5">
-        <Reveal><p className="eyebrow text-cyan-x">Client outcomes</p></Reveal>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {items.map((t, i) => (
-            <Reveal key={t.id} delayMs={Math.min(i, 5) * 60}>
-              <figure className="rounded-xl border border-line bg-ink-2 p-6 transition-all duration-200 ease-out hover:-translate-y-1 hover:border-cobalt/40">
-                <blockquote className="text-sm leading-relaxed text-slate-300">“{t.content}”</blockquote>
-                <figcaption className="mt-5">
-                  <div className="font-display text-sm font-semibold">{t.name}</div>
-                  <div className="font-mono-x text-[11px] uppercase tracking-widest text-slate-x">
-                    {[t.role, t.company].filter(Boolean).join(" · ")}
-                  </div>
-                </figcaption>
-              </figure>
-            </Reveal>
-          ))}
+    <section className="relative py-14 text-fg">
+      <div className="relative mx-auto max-w-3xl px-5">
+        <Reveal><p className="eyebrow text-center text-aqua">Client outcomes</p></Reveal>
+        <div className="mt-8">
+          <TestimonialsCarousel items={items} />
         </div>
       </div>
     </section>
@@ -194,20 +194,10 @@ export function TestimonialsSection({ items }: { items: Testimonial[] }) {
 export function FaqSection({ items }: { items: Faq[] }) {
   if (!items.length) return null;
   return (
-    <section className="bg-paper py-24">
-      <div className="mx-auto max-w-3xl px-5">
-        <Reveal><p className="eyebrow text-cobalt">Questions we hear in every first call</p></Reveal>
-        <div className="mt-8 divide-y divide-slate-200">
-          {items.map((f) => (
-            <details key={f.id} className="group py-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between font-display text-[15px] font-semibold text-ink">
-                {f.question}
-                <span className="ml-4 text-cobalt transition-transform duration-300 ease-out group-open:rotate-45">+</span>
-              </summary>
-              <p className="mt-3 animate-fade-in-up text-sm leading-relaxed text-slate-500">{f.answer}</p>
-            </details>
-          ))}
-        </div>
+    <section className="relative py-14">
+      <div className="relative mx-auto max-w-3xl px-5">
+        <Reveal><p className="eyebrow text-aqua">Questions we hear in every first call</p></Reveal>
+        <FaqAccordion items={items} />
       </div>
     </section>
   );
@@ -217,34 +207,34 @@ export function FaqSection({ items }: { items: Faq[] }) {
 export function Footer({ company, menu, logos = [], logoSettings }: { company: Company; menu: MenuItem[]; logos?: SiteLogo[]; logoSettings?: LogoSettings | null }) {
   const footerLogo = pickLogo(logos, "footer", "dark", "primary");
   return (
-    <footer className="border-t border-line bg-ink py-14 text-slate-x">
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 md:grid-cols-3">
+    <footer className="glass-strong relative border-t border-white/10 py-10 text-haze">
+      <div className="relative mx-auto grid max-w-6xl gap-8 px-5 md:grid-cols-3">
         <div>
           {footerLogo && (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={footerLogo.url} alt={company.companyName ?? "Logo"} style={{ height: logoSettings?.footerLogoHeight ?? 32, width: "auto" }} className="mb-3 object-contain" />
           )}
-          <div className="font-display text-base font-semibold text-white">{company.companyName ?? "VMS IT Solutions"}</div>
+          <div className="font-display text-base font-semibold text-fg">{company.companyName ?? "VMS IT Solutions"}</div>
           <p className="mt-3 max-w-xs text-sm leading-relaxed">
             ERP implementation, customisation and managed support for manufacturing and distribution companies.
           </p>
         </div>
         <div>
-          <div className="eyebrow text-slate-x">Company</div>
+          <div className="eyebrow text-haze">Company</div>
           <ul className="mt-4 space-y-2.5 text-sm">
             {menu.map((m) => (
-              <li key={m.id}><Link href={m.url} className="hover:text-white">{m.label}</Link></li>
+              <li key={m.id}><Link href={m.url} className="transition-colors duration-200 ease-out hover:text-fg">{m.label}</Link></li>
             ))}
           </ul>
         </div>
         <div>
-          <div className="eyebrow text-slate-x">Reach us</div>
+          <div className="eyebrow text-haze">Reach us</div>
           <ul className="mt-4 space-y-2.5 text-sm">
-            {company.email && <li><a href={`mailto:${company.email}`} className="hover:text-white">{company.email}</a></li>}
-            {company.phone && <li><a href={`tel:${company.phone.replace(/[^+\d]/g, "")}`} className="hover:text-white">{company.phone}</a></li>}
+            {company.email && <li><a href={`mailto:${company.email}`} className="transition-colors duration-200 ease-out hover:text-fg">{company.email}</a></li>}
+            {company.phone && <li><a href={`tel:${company.phone.replace(/[^+\d]/g, "")}`} className="transition-colors duration-200 ease-out hover:text-fg">{company.phone}</a></li>}
             {company.whatsapp && (
               <li>
-                <a href={`https://wa.me/${company.whatsapp.replace(/[^\d]/g, "")}`} target="_blank" rel="noopener noreferrer" className="hover:text-white">
+                <a href={`https://wa.me/${company.whatsapp.replace(/[^\d]/g, "")}`} target="_blank" rel="noopener noreferrer" className="transition-colors duration-200 ease-out hover:text-fg">
                   WhatsApp — {company.whatsapp}
                 </a>
               </li>
@@ -254,7 +244,7 @@ export function Footer({ company, menu, logos = [], logoSettings }: { company: C
           </ul>
         </div>
       </div>
-      <div className="mx-auto mt-12 max-w-6xl border-t border-line px-5 pt-6 font-mono-x text-[11px] uppercase tracking-widest">
+      <div className="relative mx-auto mt-8 max-w-6xl border-t border-white/10 px-5 pt-6 font-mono-x text-[11px] uppercase tracking-widest">
         © {new Date().getFullYear()} {company.companyName ?? "VMS IT Solutions"} · All rights reserved
       </div>
     </footer>
