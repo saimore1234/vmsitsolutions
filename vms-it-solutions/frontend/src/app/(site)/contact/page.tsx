@@ -14,6 +14,8 @@ export default async function ContactPage() {
       <ContactSection
         email={company.email}
         phone={company.phone}
+        mobile={company.mobile}
+        supportEmail={company.supportEmail}
         eyebrow="Contact us"
         title="Talk to a person, not a ticket queue"
         description="Questions about pricing, timelines or fit for your business — send us a note and we'll reply within one business day."

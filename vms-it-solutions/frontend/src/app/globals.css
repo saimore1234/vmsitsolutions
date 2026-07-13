@@ -63,6 +63,11 @@
   --field-placeholder: rgba(136, 146, 171, 0.7);
 
   --grid-line: rgba(255, 255, 255, 0.05);
+
+  --graph-line: rgba(109, 94, 248, 0.7);
+  --graph-node-fill: rgba(255, 255, 255, 0.05);
+  --graph-node-stroke: rgba(109, 94, 248, 0.75);
+  --graph-glow: rgba(109, 94, 248, 0.22);
 }
 
 :root[data-theme="light"] {
@@ -89,6 +94,11 @@
   --field-placeholder: rgba(58, 63, 84, 0.55);
 
   --grid-line: rgba(20, 20, 50, 0.14);
+
+  --graph-line: rgba(79, 63, 199, 0.85);
+  --graph-node-fill: rgba(255, 255, 255, 0.75);
+  --graph-node-stroke: rgba(79, 63, 199, 0.9);
+  --graph-glow: rgba(109, 94, 248, 0.14);
 }
 
 /* ── Public-site "liquid glass" system ───────────────────────────────── */
@@ -114,9 +124,6 @@
   mix-blend-mode: multiply;
   opacity: 0.55;
 }
-
-.module-graph { transition: opacity 0.3s var(--ease-out); }
-:root[data-theme="light"] .module-graph { opacity: 0.75; }
 
 .glass {
   background: var(--glass-bg);

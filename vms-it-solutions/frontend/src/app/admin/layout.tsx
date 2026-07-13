@@ -97,7 +97,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <div className="font-mono-x text-[10px] uppercase tracking-widest text-slate-x">{me.role.name}</div>
             </div>
           </div>
-          <nav className="flex-1 space-y-1 p-3">
+          <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3">
             {NAV.filter((n) => can(n.perm)).map((n) => {
               const active = pathname === n.href;
               return (
@@ -113,7 +113,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               );
             })}
           </nav>
-          <div className="border-t border-line p-3">
+          <div className="shrink-0 border-t border-line p-3">
             <div className="px-3 pb-2">
               <div className="truncate text-[13px] font-medium">{me.firstName} {me.lastName}</div>
               <div className="truncate font-mono-x text-[10px] text-slate-x">{me.email}</div>

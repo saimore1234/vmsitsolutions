@@ -11,7 +11,7 @@ export default async function BookDemoPage() {
 
   return (
     <div className="pt-16">
-      <ContactSection email={company.email} phone={company.phone} defaultKind="demo" communication={settings.communication} />
+      <ContactSection email={company.email} phone={company.phone} mobile={company.mobile} supportEmail={company.supportEmail} defaultKind="demo" communication={settings.communication} />
     </div>
   );
 }

@@ -62,6 +62,8 @@ function loadRecaptchaScript(siteKey: string) {
 interface ContactSectionProps {
   email?: string | null;
   phone?: string | null;
+  mobile?: string | null;
+  supportEmail?: string | null;
   eyebrow?: string;
   title?: string;
   description?: string;
@@ -70,7 +72,7 @@ interface ContactSectionProps {
 }
 
 export function ContactSection({
-  email, phone,
+  email, phone, mobile, supportEmail,
   eyebrow = "Book a demo",
   title = "See your processes running in the system",
   description = "Tell us what you make or move. We'll prepare a demo around your actual workflows — quotation to dispatch, purchase to payment, or shop floor to balance sheet.",
@@ -147,8 +149,9 @@ export function ContactSection({
             {description}
           </p>
           <div className="mt-6 space-y-2 font-mono-x text-xs uppercase tracking-widest text-haze">
-            {email && <p>Email — <span className="text-fg">{email}</span></p>}
-            {phone && <p>Phone — <span className="text-fg">{phone}</span></p>}
+            {phone && <p>Support — <span className="text-fg">{phone}</span></p>}
+            {mobile && <p>Sales — <span className="text-fg">{mobile}</span></p>}
+            {(supportEmail || email) && <p>Email — <span className="text-fg">{supportEmail || email}</span></p>}
             <p>Response — <span className="text-fg">within one business day</span></p>
           </div>
         </div>

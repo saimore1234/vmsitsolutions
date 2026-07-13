@@ -5,7 +5,11 @@ import { FaqAccordion } from "./FaqAccordion";
 import { TestimonialsCarousel } from "./TestimonialsCarousel";
 
 export interface MenuItem { id: string; label: string; url: string }
-export interface Company { companyName?: string; shortName?: string; tagline?: string; email?: string | null; phone?: string | null; whatsapp?: string | null; city?: string | null; workingHours?: string | null }
+export interface Company {
+  companyName?: string; shortName?: string; tagline?: string; email?: string | null;
+  phone?: string | null; mobile?: string | null; supportEmail?: string | null; salesEmail?: string | null;
+  whatsapp?: string | null; city?: string | null; workingHours?: string | null;
+}
 export interface SiteLogo { kind: string; url: string; thumbUrl: string | null }
 export interface LogoSettings { headerLogoHeight: number; footerLogoHeight: number; mobileLogoHeight: number }
 
@@ -42,29 +46,25 @@ function ModuleGraph() {
     <svg viewBox="0 0 760 400" className="module-graph h-full w-full" aria-hidden="true">
       <defs>
         <radialGradient id="haze" cx="50%" cy="45%" r="60%">
-          <stop offset="0%" stopColor="#6d5ef8" stopOpacity="0.22" />
-          <stop offset="100%" stopColor="#6d5ef8" stopOpacity="0" />
+          <stop offset="0%" style={{ stopColor: "var(--graph-glow)" }} />
+          <stop offset="100%" style={{ stopColor: "var(--graph-glow)", stopOpacity: 0 }} />
         </radialGradient>
-        <linearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#6d5ef8" />
-          <stop offset="100%" stopColor="#2fe6d4" />
-        </linearGradient>
       </defs>
       <rect width="760" height="400" fill="url(#haze)" />
       {EDGES.map(([a, b]) => (
         <line
           key={`${a}-${b}`}
           x1={byId[a].x} y1={byId[a].y} x2={byId[b].x} y2={byId[b].y}
-          stroke="url(#edgeGrad)" strokeOpacity="0.6" strokeWidth="1.4" className="flow-line"
+          stroke="var(--graph-line)" strokeWidth="1.4" className="flow-line"
         />
       ))}
       {NODES.map((n, i) => (
         <g key={n.id} className="node-glow" style={{ animationDelay: `${i * 0.4}s` }}>
-          <circle cx={n.x} cy={n.y} r="26" fill="rgba(255,255,255,0.04)" stroke="#6d5ef8" strokeOpacity="0.7" strokeWidth="1.4" />
-          <circle cx={n.x} cy={n.y} r="5" fill="#2fe6d4" />
+          <circle cx={n.x} cy={n.y} r="26" fill="var(--graph-node-fill)" stroke="var(--graph-node-stroke)" strokeWidth="1.4" />
+          <circle cx={n.x} cy={n.y} r="5" fill="var(--color-aqua)" />
           <text
             x={n.x} y={n.y + 44} textAnchor="middle"
-            fill="#8892ab" fontSize="11" fontFamily="var(--font-jetbrains)" letterSpacing="0.08em"
+            fill="var(--color-haze)" fontSize="11" fontFamily="var(--font-jetbrains)" letterSpacing="0.08em"
           >
             {n.label.toUpperCase()}
           </text>
@@ -230,15 +230,13 @@ export function Footer({ company, menu, logos = [], logoSettings }: { company: C
         <div>
           <div className="eyebrow text-haze">Reach us</div>
           <ul className="mt-4 space-y-2.5 text-sm">
-            {company.email && <li><a href={`mailto:${company.email}`} className="transition-colors duration-200 ease-out hover:text-fg">{company.email}</a></li>}
-            {company.phone && <li><a href={`tel:${company.phone.replace(/[^+\d]/g, "")}`} className="transition-colors duration-200 ease-out hover:text-fg">{company.phone}</a></li>}
-            {company.whatsapp && (
-              <li>
-                <a href={`https://wa.me/${company.whatsapp.replace(/[^\d]/g, "")}`} target="_blank" rel="noopener noreferrer" className="transition-colors duration-200 ease-out hover:text-fg">
-                  WhatsApp — {company.whatsapp}
-                </a>
-              </li>
+            {company.phone && (
+              <li>Support — <a href={`tel:${company.phone.replace(/[^+\d]/g, "")}`} className="transition-colors duration-200 ease-out hover:text-fg">{company.phone}</a></li>
             )}
+            {company.mobile && (
+              <li>Sales — <a href={`tel:${company.mobile.replace(/[^+\d]/g, "")}`} className="transition-colors duration-200 ease-out hover:text-fg">{company.mobile}</a></li>
+            )}
+            {company.supportEmail && <li><a href={`mailto:${company.supportEmail}`} className="transition-colors duration-200 ease-out hover:text-fg">{company.supportEmail}</a></li>}
             {company.workingHours && <li>{company.workingHours}</li>}
             {company.city && <li>{company.city}, India</li>}
           </ul>

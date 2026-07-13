@@ -26,7 +26,7 @@ export default async function HomePage() {
       <ServicesSection services={services.items} />
       <TestimonialsSection items={testimonials.items} />
       <FaqSection items={faq.items} />
-      <ContactSection email={company.email} phone={company.phone} communication={settings.communication} />
+      <ContactSection email={company.email} phone={company.phone} mobile={company.mobile} supportEmail={company.supportEmail} communication={settings.communication} />
     </>
   );
 }

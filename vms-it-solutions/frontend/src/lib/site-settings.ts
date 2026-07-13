@@ -20,7 +20,11 @@ export interface PublicSettings {
 }
 
 export function getSiteSettings() {
-  return publicGet<PublicSettings>("/settings/public", { company: null, logos: [], logoSetting: null, communication: null, menus: { header: [], footer: [] } });
+  // revalidate: 0 (no caching) — this feeds the shared nav/footer/company info on every page.
+  // With a 60s ISR cache, a build-time fetch that failed once (e.g. backend not yet reachable
+  // during the Docker image build) could get baked in as the permanently-served "fresh" version,
+  // since nothing after ever forces a real re-fetch in a way that's easy to reason about here.
+  return publicGet<PublicSettings>("/settings/public", { company: null, logos: [], logoSetting: null, communication: null, menus: { header: [], footer: [] } }, 0);
 }
 
 export function companyOrDefault(company: Company | null): Company {
