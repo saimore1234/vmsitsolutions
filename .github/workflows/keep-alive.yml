@@ -2,7 +2,9 @@ name: Keep Render backend awake
 
 on:
   schedule:
-    # Every 10 minutes — Render free web services sleep after 15 minutes of inactivity.
+    # Every 10 minutes — Render free web services sleep after 15 minutes of inactivity,
+    # and separately Neon's free Postgres suspends its compute after its own inactivity
+    # window. Hitting a DB-backed route (not just /health) keeps both layers warm.
     # GitHub disables scheduled workflows automatically after 60 days without a commit
     # to the repo, so keep pushing at least occasionally.
     - cron: "*/10 * * * *"
@@ -19,3 +21,5 @@ jobs:
             exit 1
           fi
           curl -fsS "${{ vars.RENDER_BACKEND_URL }}/health"
+      - name: Ping a database-backed route (keeps Neon compute awake too)
+        run: curl -fsS "${{ vars.RENDER_BACKEND_URL }}/api/v1/testimonials?limit=1"
