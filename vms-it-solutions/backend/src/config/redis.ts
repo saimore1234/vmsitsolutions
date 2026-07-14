@@ -2,8 +2,14 @@ import Redis from "ioredis";
 import { env } from "./env";
 
 export const redis = new Redis(env.redisUrl, {
-  maxRetriesPerRequest: 2,
+  maxRetriesPerRequest: 1,
   lazyConnect: true,
+  connectTimeout: 2000,
+  enableOfflineQueue: false,
+  // No Redis is provisioned in some environments (e.g. Render without a Redis add-on) — cache
+  // is a pure optimization, so give up after the first failed connection instead of retrying
+  // forever, which previously made every request block for several seconds on a dead connect.
+  retryStrategy: () => null,
 });
 
 redis.on("error", (err) => {
