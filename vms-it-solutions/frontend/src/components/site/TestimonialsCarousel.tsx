@@ -77,7 +77,7 @@ export function TestimonialsCarousel({ items }: { items: Testimonial[] }) {
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 2l6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
 
-          <div className="mt-6 flex items-center justify-center gap-2">
+          <div className="mt-6 flex items-center justify-center gap-1">
             {items.map((t, i) => (
               <button
                 key={t.id}
@@ -85,8 +85,13 @@ export function TestimonialsCarousel({ items }: { items: Testimonial[] }) {
                 onClick={() => go(i)}
                 aria-label={`Go to testimonial ${i + 1}`}
                 aria-current={i === index}
-                className={`h-1.5 rounded-full transition-all duration-300 ease-out ${i === index ? "btn-brand w-6" : "w-1.5 bg-haze/40 hover:bg-haze/70"}`}
-              />
+                className="grid h-8 w-8 place-items-center"
+              >
+                <span
+                  aria-hidden="true"
+                  className={`block h-1.5 rounded-full transition-all duration-300 ease-out ${i === index ? "btn-brand w-6" : "w-1.5 bg-haze/40 hover:bg-haze/70"}`}
+                />
+              </button>
             ))}
           </div>
         </>

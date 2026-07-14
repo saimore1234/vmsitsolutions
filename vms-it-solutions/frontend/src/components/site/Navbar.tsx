@@ -17,8 +17,9 @@ export function Navbar({ company, menu, logos = [], logoSettings }: { company: C
   const [open, setOpen] = useState(false);
   const desktopLogo = pickLogo(logos, "dark", "primary");
   const mobileLogo = pickLogo(logos, "mobile", "dark", "primary");
-  const headerHeight = logoSettings?.headerLogoHeight ?? 40;
-  const mobileHeight = logoSettings?.mobileLogoHeight ?? 32;
+  // Clamped so an admin-configured value can never make the logo taller than the fixed h-16 header row.
+  const headerHeight = Math.min(logoSettings?.headerLogoHeight ?? 40, 56);
+  const mobileHeight = Math.min(logoSettings?.mobileLogoHeight ?? 32, 56);
 
   return (
     <header className="glass-strong fixed inset-x-0 top-0 z-50">
