@@ -20,6 +20,9 @@ jobs:
             echo "Set the RENDER_BACKEND_URL repository variable (Settings -> Secrets and variables -> Actions -> Variables) to your Render service URL, e.g. https://vms-backend.onrender.com"
             exit 1
           fi
-          curl -fsS "${{ vars.RENDER_BACKEND_URL }}/health"
+          # Cold start from sleep can take 30-60s and Render's proxy may answer with a
+          # transient 502 while the container boots — retry instead of failing the run.
+          curl -fsS --max-time 90 --retry 5 --retry-delay 10 --retry-all-errors "${{ vars.RENDER_BACKEND_URL }}/health"
       - name: Ping a database-backed route (keeps Neon compute awake too)
-        run: curl -fsS "${{ vars.RENDER_BACKEND_URL }}/api/v1/testimonials?limit=1"
+        if: always()
+        run: curl -fsS --max-time 90 --retry 5 --retry-delay 10 --retry-all-errors "${{ vars.RENDER_BACKEND_URL }}/api/v1/testimonials?limit=1"
