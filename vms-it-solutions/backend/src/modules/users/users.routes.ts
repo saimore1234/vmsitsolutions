@@ -3,7 +3,6 @@ import { z } from "zod";
 import crypto from "crypto";
 import multer from "multer";
 import path from "path";
-import fs from "fs";
 import sharp from "sharp";
 import { parse as parseCsv } from "csv-parse/sync";
 import { UAParser } from "ua-parser-js";
@@ -17,6 +16,7 @@ import { hashPassword } from "../../utils/password";
 import { parsePageQuery, paged } from "../../utils/pagination";
 import { logActivity } from "../../middleware/activityLog";
 import { env } from "../../config/env";
+import { randomFileName, uploadToStorage, deleteFromStorage, storageKeyFromUrl } from "../../utils/storage";
 
 export const userRoutes = Router();
 userRoutes.use(requireAuth);
@@ -413,12 +413,8 @@ userRoutes.post("/:id/invite/cancel", authorize("users:edit"), asyncHandler(asyn
   res.json({ success: true, data: user });
 }));
 
-const AVATAR_DIR = path.join(env.uploadDir, "avatars");
 const avatarUpload = multer({
-  storage: multer.diskStorage({
-    destination: (_r, _f, cb) => { fs.mkdirSync(AVATAR_DIR, { recursive: true }); cb(null, AVATAR_DIR); },
-    filename: (_r, file, cb) => cb(null, crypto.randomBytes(8).toString("hex") + path.extname(file.originalname).toLowerCase()),
-  }),
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_r, file, cb) => {
     if (!["image/png", "image/jpeg", "image/webp"].includes(file.mimetype)) return cb(new Error("Use PNG, JPG or WEBP"));
@@ -426,25 +422,22 @@ const avatarUpload = multer({
   },
 });
 
-async function unlinkAvatar(url: string | null | undefined) {
-  if (!url || !url.includes("/uploads/avatars/")) return;
-  await fs.promises.unlink(path.join(AVATAR_DIR, url.split("/uploads/avatars/")[1])).catch(() => undefined);
+async function deleteAvatar(url: string | null | undefined) {
+  if (!url) return;
+  await deleteFromStorage(storageKeyFromUrl(url));
 }
 
 userRoutes.post("/:id/photo", authorize("users:edit"), avatarUpload.single("file"), asyncHandler(async (req, res) => {
   if (!req.file) throw ApiError.badRequest("Attach an image");
-  const stem = req.file.filename.replace(/\.[^.]+$/, "");
-  const webpName = `${stem}.webp`;
-  const thumbName = `${stem}-thumb.webp`;
-  await sharp(req.file.path).resize(512, 512, { fit: "cover" }).webp({ quality: 90 }).toFile(path.join(AVATAR_DIR, webpName));
-  await sharp(req.file.path).resize(96, 96, { fit: "cover" }).webp({ quality: 80 }).toFile(path.join(AVATAR_DIR, thumbName));
-  await fs.promises.unlink(req.file.path).catch(() => undefined);
+  const stem = randomFileName(req.file.originalname, "");
+  const webpBuffer = await sharp(req.file.buffer).resize(512, 512, { fit: "cover" }).webp({ quality: 90 }).toBuffer();
+  const thumbBuffer = await sharp(req.file.buffer).resize(96, 96, { fit: "cover" }).webp({ quality: 80 }).toBuffer();
 
   const prev = await prisma.user.findUnique({ where: { id: req.params.id }, select: { avatarUrl: true, avatarThumbUrl: true } });
-  const avatarUrl = `${env.publicUrl}/uploads/avatars/${webpName}`;
-  const avatarThumbUrl = `${env.publicUrl}/uploads/avatars/${thumbName}`;
+  const avatarUrl = await uploadToStorage(`avatars/${stem}.webp`, webpBuffer, "image/webp");
+  const avatarThumbUrl = await uploadToStorage(`avatars/${stem}-thumb.webp`, thumbBuffer, "image/webp");
   const user = await prisma.user.update({ where: { id: req.params.id }, data: { avatarUrl, avatarThumbUrl }, select: detailSelect });
-  if (prev) { await unlinkAvatar(prev.avatarUrl); await unlinkAvatar(prev.avatarThumbUrl); }
+  if (prev) { await deleteAvatar(prev.avatarUrl); await deleteAvatar(prev.avatarThumbUrl); }
   logActivity(req, "photo_updated", "users", user.id);
   res.json({ success: true, data: user });
 }));
@@ -452,17 +445,13 @@ userRoutes.post("/:id/photo", authorize("users:edit"), avatarUpload.single("file
 userRoutes.delete("/:id/photo", authorize("users:edit"), asyncHandler(async (req, res) => {
   const prev = await prisma.user.findUnique({ where: { id: req.params.id }, select: { avatarUrl: true, avatarThumbUrl: true } });
   const user = await prisma.user.update({ where: { id: req.params.id }, data: { avatarUrl: null, avatarThumbUrl: null }, select: detailSelect });
-  if (prev) { await unlinkAvatar(prev.avatarUrl); await unlinkAvatar(prev.avatarThumbUrl); }
+  if (prev) { await deleteAvatar(prev.avatarUrl); await deleteAvatar(prev.avatarThumbUrl); }
   res.json({ success: true, data: user });
 }));
 
-const DOC_DIR = path.join(env.uploadDir, "documents");
 const DOC_MIME: Record<string, string> = { "application/pdf": ".pdf", "image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp" };
 const docUpload = multer({
-  storage: multer.diskStorage({
-    destination: (_r, _f, cb) => { fs.mkdirSync(DOC_DIR, { recursive: true }); cb(null, DOC_DIR); },
-    filename: (_r, file, cb) => cb(null, crypto.randomBytes(8).toString("hex") + (DOC_MIME[file.mimetype] ?? path.extname(file.originalname))),
-  }),
+  storage: multer.memoryStorage(),
   limits: { fileSize: 15 * 1024 * 1024 },
   fileFilter: (_r, file, cb) => { if (!DOC_MIME[file.mimetype]) return cb(new Error("Use PDF, PNG or JPG")); cb(null, true); },
 });
@@ -476,11 +465,12 @@ userRoutes.post("/:id/documents", authorize("users:edit"), docUpload.single("fil
   if (!file) throw ApiError.badRequest("Attach a file");
   const kind = String(req.body.kind ?? "other");
   if (!(DOC_KINDS as readonly string[]).includes(kind)) {
-    await fs.promises.unlink(file.path).catch(() => undefined);
     throw ApiError.badRequest("Unknown document kind");
   }
+  const ext = DOC_MIME[file.mimetype] ?? path.extname(file.originalname);
+  const url = await uploadToStorage(`documents/${randomFileName(file.originalname, ext)}`, file.buffer, file.mimetype);
   const doc = await prisma.userDocument.create({
-    data: { userId: req.params.id, kind, name: file.originalname, url: `${env.publicUrl}/uploads/documents/${file.filename}`, mimeType: file.mimetype, sizeBytes: file.size },
+    data: { userId: req.params.id, kind, name: file.originalname, url, mimeType: file.mimetype, sizeBytes: file.size },
   });
   logActivity(req, "document_uploaded", "users", req.params.id, { kind });
   res.status(201).json({ success: true, data: doc });
@@ -489,7 +479,7 @@ userRoutes.post("/:id/documents", authorize("users:edit"), docUpload.single("fil
 userRoutes.delete("/:id/documents/:docId", authorize("users:edit"), asyncHandler(async (req, res) => {
   const doc = await prisma.userDocument.findUnique({ where: { id: req.params.docId } });
   if (!doc || doc.userId !== req.params.id) throw ApiError.notFound();
-  await fs.promises.unlink(path.join(DOC_DIR, doc.url.split("/uploads/documents/")[1])).catch(() => undefined);
+  await deleteFromStorage(storageKeyFromUrl(doc.url));
   await prisma.userDocument.delete({ where: { id: doc.id } });
   logActivity(req, "document_deleted", "users", req.params.id, { kind: doc.kind });
   res.json({ success: true, message: "Document deleted" });

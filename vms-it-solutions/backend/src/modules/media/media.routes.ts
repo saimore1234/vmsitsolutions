@@ -1,16 +1,13 @@
 import { Router } from "express";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
-import crypto from "crypto";
 import { prisma } from "../../config/prisma";
 import { requireAuth } from "../../middleware/auth";
 import { authorize } from "../../middleware/authorize";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { ApiError } from "../../utils/ApiError";
-import { env } from "../../config/env";
 import { parsePageQuery, paged } from "../../utils/pagination";
 import { logActivity } from "../../middleware/activityLog";
+import { randomFileName, uploadToStorage, deleteFromStorage, storageKeyFromUrl } from "../../utils/storage";
 
 const ALLOWED: Record<string, string> = {
   "image/jpeg": "image", "image/png": "image", "image/webp": "image", "image/gif": "image",
@@ -23,19 +20,8 @@ const ALLOWED: Record<string, string> = {
   "application/vnd.openxmlformats-officedocument.presentationml.presentation": "slide",
 };
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    fs.mkdirSync(env.uploadDir, { recursive: true });
-    cb(null, env.uploadDir);
-  },
-  filename: (_req, file, cb) => {
-    const safe = crypto.randomBytes(8).toString("hex") + path.extname(file.originalname).toLowerCase();
-    cb(null, safe);
-  },
-});
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 25 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     if (!ALLOWED[file.mimetype]) return cb(new Error("File type not allowed"));
@@ -64,15 +50,22 @@ mediaRoutes.post("/upload", authorize("media:create"), upload.array("files", 10)
   const files = req.files as Express.Multer.File[] | undefined;
   if (!files?.length) throw ApiError.badRequest("Attach at least one file");
   const folderId = req.body.folderId || null;
+
+  const uploaded = await Promise.all(files.map(async (f) => {
+    const fileName = randomFileName(f.originalname);
+    const url = await uploadToStorage(`media/${fileName}`, f.buffer, f.mimetype);
+    return { f, fileName, url };
+  }));
+
   const records = await prisma.$transaction(
-    files.map((f) => prisma.media.create({
+    uploaded.map(({ f, fileName, url }) => prisma.media.create({
       data: {
         name: f.originalname,
-        fileName: f.filename,
+        fileName,
         mimeType: f.mimetype,
         sizeBytes: f.size,
         kind: ALLOWED[f.mimetype] ?? "other",
-        url: `${env.publicUrl}/uploads/${f.filename}`,
+        url,
         folderId,
       },
     })),
@@ -91,7 +84,7 @@ mediaRoutes.patch("/:id", authorize("media:edit"), asyncHandler(async (req, res)
 
 mediaRoutes.delete("/:id", authorize("media:delete"), asyncHandler(async (req, res) => {
   const item = await prisma.media.delete({ where: { id: req.params.id } });
-  fs.promises.unlink(path.join(env.uploadDir, item.fileName)).catch(() => undefined);
+  await deleteFromStorage(storageKeyFromUrl(item.url));
   logActivity(req, "deleted", "media", req.params.id);
   res.json({ success: true, message: "File deleted" });
 }));

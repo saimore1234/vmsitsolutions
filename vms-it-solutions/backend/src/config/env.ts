@@ -14,4 +14,12 @@ export const env = {
   uploadDir: process.env.UPLOAD_DIR ?? "uploads",
   publicUrl: process.env.PUBLIC_URL ?? "http://localhost:4000",
   isProd: (process.env.NODE_ENV ?? "development") === "production",
+
+  // Cloudflare R2 (S3-compatible). Uploaded files live here instead of local disk, which
+  // doesn't survive restarts/redeploys on most hosting platforms (Render included).
+  r2AccountId: process.env.R2_ACCOUNT_ID ?? "",
+  r2AccessKeyId: process.env.R2_ACCESS_KEY_ID ?? "",
+  r2SecretAccessKey: process.env.R2_SECRET_ACCESS_KEY ?? "",
+  r2Bucket: process.env.R2_BUCKET_NAME ?? "",
+  r2PublicUrl: (process.env.R2_PUBLIC_URL ?? "").replace(/\/$/, ""),
 };
