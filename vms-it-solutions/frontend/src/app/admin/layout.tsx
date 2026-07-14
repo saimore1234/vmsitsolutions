@@ -97,7 +97,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <div className="font-mono-x text-[10px] uppercase tracking-widest text-slate-x">{me.role.name}</div>
             </div>
           </div>
-          <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3">
+          <nav className="scrollbar-hidden min-h-0 flex-1 space-y-1 overflow-y-auto p-3">
             {NAV.filter((n) => can(n.perm)).map((n) => {
               const active = pathname === n.href;
               return (
