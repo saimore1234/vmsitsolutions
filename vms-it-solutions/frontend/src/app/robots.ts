@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/admin", "/login"],
     },
-    sitemap: "https://vmsitsolutions.me/sitemap.xml",
+    sitemap: "https://www.vmsitsolutions.me/sitemap.xml",
   };
 }

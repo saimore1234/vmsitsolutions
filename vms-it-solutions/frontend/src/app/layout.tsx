@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage = branding.logos.find((l) => l.kind === "og_image")?.url;
 
   return {
-    metadataBase: new URL("https://vmsitsolutions.me"),
+    metadataBase: new URL("https://www.vmsitsolutions.me"),
     title: {
       default: "VMS IT Solutions — ERP Consulting for Manufacturers & Distributors",
       template: "%s · VMS IT Solutions",
@@ -45,7 +45,7 @@ const ORG_JSON_LD = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "VMS IT Solutions",
-  url: "https://vmsitsolutions.me",
+  url: "https://www.vmsitsolutions.me",
   description: "ERPNext and SAP Business One implementation, customisation and managed support for mid-market manufacturing and distribution companies in India.",
   contactPoint: [
     { "@type": "ContactPoint", contactType: "sales", telephone: "+91-91378-01103" },

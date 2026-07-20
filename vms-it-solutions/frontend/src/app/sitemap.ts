@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { publicGet } from "@/lib/api";
 
-const SITE_URL = "https://vmsitsolutions.me";
+const SITE_URL = "https://www.vmsitsolutions.me";
 
 const STATIC_ROUTES = [
   "", "about", "services", "products", "industries", "careers", "blog",
