@@ -18,6 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage = branding.logos.find((l) => l.kind === "og_image")?.url;
 
   return {
+    metadataBase: new URL("https://vmsitsolutions.me"),
     title: {
       default: "VMS IT Solutions — ERP Consulting for Manufacturers & Distributors",
       template: "%s · VMS IT Solutions",
@@ -31,8 +32,26 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       images: ogImage ? [{ url: ogImage }] : undefined,
     },
+    twitter: {
+      card: "summary_large_image",
+      title: "VMS IT Solutions",
+      description: "ERP consulting that ships. ERPNext & SAP Business One implementations in 8–16 weeks.",
+      images: ogImage ? [ogImage] : undefined,
+    },
   };
 }
+
+const ORG_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "VMS IT Solutions",
+  url: "https://vmsitsolutions.me",
+  description: "ERPNext and SAP Business One implementation, customisation and managed support for mid-market manufacturing and distribution companies in India.",
+  contactPoint: [
+    { "@type": "ContactPoint", contactType: "sales", telephone: "+91-91378-01103" },
+    { "@type": "ContactPoint", contactType: "customer support", telephone: "+91-97665-45836", email: "sahidesh02@gmail.com" },
+  ],
+};
 
 const THEME_INIT_SCRIPT = `try{if(localStorage.getItem('theme')==='light'){document.documentElement.setAttribute('data-theme','light')}}catch(e){}`;
 
@@ -43,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* strategy="beforeInteractive" guarantees this runs before hydration/paint — a plain
             <script> JSX tag is not reliably synchronous under React 19's resource hoisting. */}
         <Script id="theme-init" strategy="beforeInteractive">{THEME_INIT_SCRIPT}</Script>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSON_LD) }} />
       </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrains.variable} bg-paper text-slate-900 antialiased`}>
         {children}

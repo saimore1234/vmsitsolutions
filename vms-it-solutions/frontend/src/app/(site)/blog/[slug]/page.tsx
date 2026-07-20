@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { API_URL } from "@/lib/api";
@@ -46,8 +47,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           {post.publishAt && new Date(post.publishAt).toLocaleDateString()}
         </div>
         {post.featuredImage && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={post.featuredImage} alt="" className="mt-8 w-full rounded-xl object-cover" />
+          <div className="relative mt-8 aspect-video w-full overflow-hidden rounded-xl">
+            <Image src={post.featuredImage} alt={post.title} fill sizes="(min-width: 768px) 768px, 100vw" className="object-cover" priority />
+          </div>
         )}
         <div className="glass prose prose-invert mt-8 max-w-none whitespace-pre-wrap rounded-xl p-6 text-[15px] leading-relaxed text-mist">{post.content}</div>
         {post.tags.length > 0 && (

@@ -149,7 +149,7 @@ function StandardModal({ popup, onClose }: { popup: Popup; onClose: (track?: boo
     <ModalShell onClose={() => onClose()}>
       {popup.imageUrl && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={popup.imageUrl} alt="" className="mb-4 h-36 w-full rounded-lg object-cover" />
+        <img src={popup.imageUrl} alt={popup.title ?? ""} className="mb-4 h-36 w-full rounded-lg object-cover" />
       )}
       {popup.title && <h3 className="pr-6 font-display text-lg font-semibold text-fg">{popup.title}</h3>}
       {popup.content && <p className="mt-2 text-sm text-mist">{popup.content}</p>}

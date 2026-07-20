@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
@@ -25,9 +26,14 @@ export default async function BlogListPage() {
               <Reveal key={b.id} delayMs={Math.min(i, 5) * 60}>
                 <Link href={`/blog/${b.slug}`} className="group glass block overflow-hidden rounded-xl hover-glow hover:-translate-y-1">
                   {b.featuredImage && (
-                    <div className="overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={b.featuredImage} alt="" className="h-40 w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105" />
+                    <div className="relative h-40 w-full overflow-hidden">
+                      <Image
+                        src={b.featuredImage}
+                        alt={b.title}
+                        fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+                      />
                     </div>
                   )}
                   <div className="p-5">
