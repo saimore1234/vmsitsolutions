@@ -14,8 +14,12 @@ interface BrandingLogo { kind: string; url: string }
 // on the same revalidate window as the rest of the public site (see app/page.tsx).
 export async function generateMetadata(): Promise<Metadata> {
   const branding = await publicGet<{ logos: BrandingLogo[] }>("/settings/branding", { logos: [] }, 60);
-  const favicon = branding.logos.find((l) => l.kind === "favicon")?.url;
-  const ogImage = branding.logos.find((l) => l.kind === "og_image")?.url;
+  const logo = (kind: string) => branding.logos.find((l) => l.kind === kind)?.url;
+  // Fall back to the primary logo so the browser always has an icon to show — without this,
+  // an unconfigured favicon silently omits the <link rel="icon"> tag and every browser's
+  // automatic /favicon.ico probe 404s.
+  const favicon = logo("favicon") ?? logo("primary");
+  const ogImage = logo("og_image") ?? logo("primary");
 
   return {
     metadataBase: new URL("https://www.vmsitsolutions.me"),

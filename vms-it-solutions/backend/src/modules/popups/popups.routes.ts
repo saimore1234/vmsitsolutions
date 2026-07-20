@@ -8,6 +8,7 @@ import { asyncHandler } from "../../utils/asyncHandler";
 import { ApiError } from "../../utils/ApiError";
 import { parsePageQuery, paged } from "../../utils/pagination";
 import { logActivity } from "../../middleware/activityLog";
+import { publicFormLimiter } from "../../middleware/rateLimit";
 
 export const popupRoutes = Router();
 
@@ -120,7 +121,7 @@ const trackSchema = z.object({
   body: z.object({ type: z.enum(["view", "dismiss", "conversion"]) }),
 });
 
-popupRoutes.post("/:id/track", validate(trackSchema), asyncHandler(async (req, res) => {
+popupRoutes.post("/:id/track", publicFormLimiter, validate(trackSchema), asyncHandler(async (req, res) => {
   const field = req.body.type === "view" ? "views" : req.body.type === "dismiss" ? "dismissals" : "conversions";
   await prisma.popup.update({ where: { id: req.params.id }, data: { [field]: { increment: 1 } } }).catch(() => null);
   res.json({ success: true });
