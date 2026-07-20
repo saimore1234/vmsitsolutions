@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const csp = [
   "default-src 'self'",
@@ -33,4 +34,8 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Only wrap with Sentry's build-time plugin (source map upload etc.) when a DSN is actually
+// configured — keeps local dev builds fast and avoids needing Sentry auth tokens to build at all.
+export default process.env.NEXT_PUBLIC_SENTRY_DSN
+  ? withSentryConfig(nextConfig, { silent: true, org: process.env.SENTRY_ORG, project: process.env.SENTRY_PROJECT, disableLogger: true })
+  : nextConfig;
